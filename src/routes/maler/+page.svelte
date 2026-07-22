@@ -22,8 +22,7 @@
 
   const previewTemplate = async (template: Template): Promise<void> => {
     try {
-      const base64 = await requestPdfPreview({ template });
-      uiState.previewPdfBase64 = base64;
+      uiState.previewPdfBase64 = await requestPdfPreview({ template });
     } catch (err) {
       uiState.globalError = err as never;
     }
