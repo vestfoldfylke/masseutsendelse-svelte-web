@@ -6,6 +6,7 @@
   import { deepMerge, pickKeys } from "$lib/objectUtils";
   import { type ParsedPolygon, parsePolygonFile } from "$lib/polyparser/polyparser";
   import type { EnrichedMatrikkelData } from "$lib/server/matrikkelEnrichment";
+  import { uiState } from "$lib/state/uiState.svelte";
   import type { Template } from "$lib/templates/types";
   import type { MatrikkelEnhet } from "$lib/types/matrikkel.types";
   import type { UploadedFileData } from "$lib/uploader/types";
@@ -232,7 +233,7 @@
     }
 
     try {
-      await onPreview({
+      uiState.previewPdfBase64 = await onPreview({
         attachments: dispatch.attachments,
         createdByDepartment: dispatch.createdByDepartment,
         archivenumber: dispatch.archivenumber,
