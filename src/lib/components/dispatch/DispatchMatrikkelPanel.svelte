@@ -1,6 +1,6 @@
 <script lang="ts">
   import { exportOwnersToCsv } from "$lib/dispatch/exportOwners";
-  import type { Dispatch, MatrikkelUnit, Owner } from "$lib/dispatch/types";
+  import type { Dispatch, Owner } from "$lib/dispatch/types";
   import Loading from "../Loading.svelte";
   import DispatchMap from "../Map.svelte";
   import MatrikkelOwnerTable from "../MatrikkelOwnerTable.svelte";
