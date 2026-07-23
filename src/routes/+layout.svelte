@@ -44,7 +44,7 @@
   }
 
   header {
-    padding: 4rem 2rem 0;
+    padding: 1rem 2rem 0;
   }
 
   main {
