@@ -76,14 +76,6 @@
     try {
       await saveDispatch(dispatch);
       await invalidateAll();
-
-      const id: number = data.dispatches.findIndex((d: Dispatch) => d._id === dispatch._id)
-      if (id === -1) {
-        alert("Dispatch not found. Update inplace not possible")
-        return;
-      }
-
-      data.dispatches[id] = dispatch;
     } catch (err) {
       uiState.globalError = err as never;
     }
