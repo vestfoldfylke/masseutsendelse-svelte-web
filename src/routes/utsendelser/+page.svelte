@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { invalidateAll } from "$app/navigation";
   import { fetchDispatchById, fetchMatrikkelEnrichment, saveDispatch, triggerAttachmentDownload } from "$lib/client/dispatchApi";
   import { requestPdfPreview } from "$lib/client/templateApi";
   import DispatchEditor from "$lib/components/DispatchEditor.svelte";
@@ -70,6 +71,23 @@
       uiState.loadingModal = undefined;
     }
   };
+
+  const handleSaveDispatch = async (dispatch: Dispatch): Promise<void> => {
+    try {
+      await saveDispatch(dispatch);
+      await invalidateAll();
+
+      const id: number = data.dispatches.findIndex((d: Dispatch) => d._id === dispatch._id)
+      if (id === -1) {
+        alert("Dispatch not found. Update inplace not possible")
+        return;
+      }
+
+      data.dispatches[id] = dispatch;
+    } catch (err) {
+      uiState.globalError = err as never;
+    }
+  }
 
   const previewPdf = async (item: Dispatch): Promise<void> => {
     try {
@@ -146,7 +164,7 @@
       bind:dispatch={editedItem}
       templates={data.templates}
       onFetchMatrikkelData={fetchMatrikkelEnrichment}
-      onSave={saveDispatch}
+      onSave={handleSaveDispatch}
       onPreview={requestPdfPreview}
       onDownloadAttachment={(file) => (editedItem?._id ? triggerAttachmentDownload(editedItem._id, file.name) : undefined)}
       onSaved={() => (editedItem = undefined)}
