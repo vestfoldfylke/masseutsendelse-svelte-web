@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { invalidateAll } from "$app/navigation";
   import { requestPdfPreview, saveTemplate } from "$lib/client/templateApi";
   import TemplateEditor from "$lib/components/TemplateEditor.svelte";
   import { uiState } from "$lib/state/uiState.svelte";
@@ -10,9 +11,20 @@
   let isShowEditor = $state(false);
   let activeTemplate: Template | undefined = $state(undefined);
 
+  let templates: Template[] = $derived.by(() => data.templates);
+
   const openTemplateEditor = (template?: Template): void => {
     activeTemplate = template ? JSON.parse(JSON.stringify(template)) : {};
     isShowEditor = true;
+  };
+
+  const handleSaveTemplate = async (template: Template): Promise<void> => {
+    try {
+      await saveTemplate(template);
+      await invalidateAll();
+    } catch (err) {
+      uiState.globalError = err as never;
+    }
   };
 
   const reset = (): void => {
@@ -44,7 +56,7 @@
       </tr>
     </thead>
     <tbody>
-      {#each data.templates as template (template._id)}
+      {#each templates as template (template._id)}
         <tr>
           <td>{template.name}</td>
           <td>{template.description}</td>
@@ -61,7 +73,7 @@
 {#if isShowEditor}
   <dialog class="ds-dialog" data-placement="center" open onclose={reset}>
     <h2 class="ds-heading" data-size="md">Endre mal</h2>
-    <TemplateEditor template={activeTemplate} onSave={saveTemplate} onPreview={requestPdfPreview} onSaved={reset} onClose={reset} />
+    <TemplateEditor template={activeTemplate} onSave={handleSaveTemplate} onPreview={requestPdfPreview} onSaved={reset} onClose={reset} />
   </dialog>
 {/if}
 
