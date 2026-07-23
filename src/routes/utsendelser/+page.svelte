@@ -31,6 +31,7 @@
     if (!dateString) {
       return "";
     }
+
     try {
       const date = new Date(dateString);
       const day = date.getDate().toString().padStart(2, "0");
@@ -47,6 +48,7 @@
     if (!search) {
       return data.dispatches;
     }
+
     const term = search.toUpperCase();
     return data.dispatches.filter((dispatch) => {
       const searchable = {
@@ -71,14 +73,13 @@
 
   const previewPdf = async (item: Dispatch): Promise<void> => {
     try {
-      const base64 = await requestPdfPreview({
+      uiState.previewPdfBase64 = await requestPdfPreview({
         attachments: item.attachments,
         createdByDepartment: item.createdByDepartment,
         archivenumber: item.archivenumber,
         createdBy: item.createdBy,
         template: item.template
       });
-      uiState.previewPdfBase64 = base64;
     } catch (err) {
       uiState.globalError = err as never;
     }
