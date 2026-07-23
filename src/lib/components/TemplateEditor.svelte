@@ -292,8 +292,6 @@
   <ErrorField {error} showResetButton={false} onOk={() => (error = undefined)} showOkButton />
 {:else}
   <div class="template-editor">
-    <h2 class="ds-heading" data-size="md">Generelt</h2>
-    <p class="ds-paragraph">Generell informasjon om malen</p>
     <div class="ds-field">
       <label class="ds-label" for="template-name">Navn</label>
       <input id="template-name" class="ds-input" bind:value={activeTemplate.name} />
@@ -352,6 +350,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    margin-top: 1rem;
   }
 
   .actions {

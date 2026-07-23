@@ -20,11 +20,12 @@
   };
 </script>
 
-<dialog bind:this={dialogElement} class="ds-dialog" data-placement="center" onclose={close} onclick={(event) => event.target === dialogElement && close()}>
-  <div class="preview-header">
+<dialog bind:this={dialogElement} class="ds-dialog" data-placement="center" id="preview-modal" onclose={close} onclick={(event) => event.target === dialogElement && close()}>
+  <div class="dialog-header">
     <h2 class="ds-heading" data-size="md">Forhåndsvisning</h2>
-    <button type="button" class="ds-button" data-variant="tertiary" onclick={close}>Lukk</button>
+    <button class="ds-button close-dialog-button" data-icon="true" data-variant="tertiary" type="button" aria-label="Lukk dialogvindu" data-color="neutral" command="close" commandfor="preview-modal"></button>
   </div>
+
   {#if uiState.previewPdfBase64}
     <iframe title="PDF forhåndsvisning" src={`data:application/pdf;base64,${uiState.previewPdfBase64}`} class="pdf-frame"></iframe>
   {/if}
@@ -38,12 +39,6 @@
     max-height: 90vh;
     display: flex;
     flex-direction: column;
-  }
-
-  .preview-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
   }
 
   .pdf-frame {

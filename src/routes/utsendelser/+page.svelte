@@ -100,6 +100,16 @@
       window.open(url, "_blank");
     }
   };
+
+  const getEditActionName = (dispatch: Dispatch): string => {
+    if (!dispatch.status) {
+      return "Vis";
+    }
+
+    return ["approved", "notapproved"].includes(dispatch.status)
+      ? "Rediger"
+      : "Vis";
+  }
 </script>
 
 <div class="container">
@@ -134,7 +144,7 @@
           </td>
           <td>{item.createdBy}</td>
           <td class="actions">
-            <button type="button" class="ds-button" data-variant="tertiary" data-icon onclick={() => editItem(item as Dispatch & { _id: string })} aria-label="Rediger" title="Rediger">✏️</button>
+            <button type="button" class="ds-button" data-variant="tertiary" data-icon onclick={() => editItem(item as Dispatch & { _id: string })} aria-label={getEditActionName(item)} title={getEditActionName(item)}>✏️</button>
             <button type="button" class="ds-button" data-variant="tertiary" data-icon disabled={!item.template?._id} onclick={() => previewPdf(item)} aria-label="Forhåndsvisning" title="Forhåndsvisning">🔍</button>
             <button type="button" class="ds-button" data-variant="tertiary" data-icon onclick={() => (mapItem = item)} aria-label="Se kart" title="Se kart">🗺️</button>
             <button type="button" class="ds-button" data-variant="tertiary" data-icon disabled={!item.archiveUrl} onclick={() => openArchiveUrl(item.archiveUrl)} aria-label="Se arkiv" title="Se arkiv">🗄️</button>
@@ -150,8 +160,12 @@
 </div>
 
 {#if editedItem}
-  <dialog class="ds-dialog" data-placement="center" open onclose={() => (editedItem = undefined)}>
-    <h2 class="ds-heading" data-size="md">Rediger</h2>
+  <dialog class="ds-dialog" data-placement="center" id="dispatch-modal" open onclose={() => (editedItem = undefined)}>
+    <div class="dialog-header">
+      <h2 class="ds-heading" data-size="md">{getEditActionName(editedItem)} utsendelse</h2>
+      <button class="ds-button close-dialog-button" data-icon="true" data-variant="tertiary" type="button" aria-label="Lukk dialogvindu" data-color="neutral" command="close" commandfor="dispatch-modal"></button>
+    </div>
+
     <DispatchEditor
       bind:dispatch={editedItem}
       templates={data.templates}
@@ -166,10 +180,13 @@
 {/if}
 
 {#if mapItem}
-  <dialog class="ds-dialog" data-placement="center" open onclose={() => (mapItem = undefined)}>
-    <h2 class="ds-heading" data-size="md">Kart</h2>
+  <dialog class="ds-dialog" data-placement="center" id="map-modal" open onclose={() => (mapItem = undefined)}>
+    <div class="dialog-header">
+      <h2 class="ds-heading" data-size="md">Kart</h2>
+      <button class="ds-button close-dialog-button" data-icon="true" data-variant="tertiary" type="button" aria-label="Lukk dialogvindu" data-color="neutral" command="close" commandfor="map-modal"></button>
+    </div>
+
     <DispatchMap polygons={mapItem.polygons} height="60vh" />
-    <button type="button" class="ds-button" data-variant="secondary" onclick={() => (mapItem = undefined)}>Lukk</button>
   </dialog>
 {/if}
 

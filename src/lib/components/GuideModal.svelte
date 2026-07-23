@@ -20,11 +20,12 @@
   };
 </script>
 
-<dialog bind:this={dialogElement} class="ds-dialog" data-placement="center" onclose={close} onclick={(event) => event.target === dialogElement && close()}>
-  <div class="guide-header">
+<dialog bind:this={dialogElement} class="ds-dialog" data-placement="center" id="guide-modal" onclose={close} onclick={(event) => event.target === dialogElement && close()}>
+  <div class="dialog-header">
     <h2 class="ds-heading" data-size="md">Guide</h2>
-    <button type="button" class="ds-button" data-variant="tertiary" onclick={close}>Lukk</button>
+    <button class="ds-button close-dialog-button" data-icon="true" data-variant="tertiary" type="button" aria-label="Lukk dialogvindu" data-color="neutral" command="close" commandfor="guide-modal"></button>
   </div>
+
   <div class="overflow">
     <h3 class="ds-heading" data-size="sm">Om siden</h3>
     <span class="error-text">Det er viktig at polygonet benytter koordinatsystem EUREF89 UTM Sone 32 og er av et gyldig format.</span>
@@ -77,12 +78,6 @@
     max-height: 80vh;
     display: flex;
     flex-direction: column;
-  }
-
-  .guide-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
   }
 
   .overflow {

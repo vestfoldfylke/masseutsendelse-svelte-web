@@ -72,7 +72,10 @@
 
 {#if isShowEditor}
   <dialog class="ds-dialog" data-placement="center" open onclose={reset}>
-    <h2 class="ds-heading" data-size="md">Endre mal</h2>
+    <div class="dialog-header">
+      <h2 class="ds-heading" data-size="md">{activeTemplate && activeTemplate._id ? "Rediger mal" : "Ny mal"}</h2>
+    </div>
+
     <TemplateEditor template={activeTemplate} onSave={handleSaveTemplate} onPreview={requestPdfPreview} onSaved={reset} onClose={reset} />
   </dialog>
 {/if}
