@@ -15,9 +15,7 @@
 <div id="app">
   {#if data.user}
     <header>
-      <div class="container">
-        <Header user={data.user} />
-      </div>
+      <Header user={data.user} />
     </header>
   {/if}
   <main>
@@ -40,9 +38,12 @@
   #app {
     width: 100%;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
   }
 
-  .container {
+  header {
     padding: 4rem 2rem 0;
   }
 
