@@ -5,7 +5,7 @@
   import { onMount } from "svelte";
   import { decodeBase64, encodeBase64 } from "$lib/base64";
   import { uiState } from "$lib/state/uiState.svelte";
-  import type { Template as TemplateData } from "$lib/templates/types";
+  import type { Template } from "$lib/templates/types";
   import ErrorField from "./errors/ErrorField.svelte";
   import SchemaFields from "./SchemaFields.svelte";
   import InsertTemplateForm from "./templating/InsertTemplateForm.svelte";
@@ -25,14 +25,14 @@
   };
 
   type Props = {
-    template?: TemplateData;
+    template?: Template;
     options?: Partial<EditorOptions>;
     hideModeSwitch?: boolean;
     showCloseButton?: boolean;
     height?: string;
     showDocumentTemplateSelect?: boolean;
-    onSave?: (template: TemplateData) => Promise<void>;
-    onPreview?: (req: { template: TemplateData; preview: true }) => Promise<string>;
+    onSave?: (template: Template) => Promise<void>;
+    onPreview?: (req: { template: Template; preview: true }) => Promise<string>;
     onSaved?: () => void;
     onClose?: () => void;
   };
@@ -68,7 +68,7 @@
   // Intentionally a one-time snapshot of the `template` prop (matches the original's Vue `created()`
   // hook) - the user edits this local copy until they explicitly save, later prop changes shouldn't
   // clobber in-progress edits.
-  const initialTemplate: TemplateData = template && typeof template === "object" && Object.keys(template).length > 0 ? JSON.parse(JSON.stringify(template)) : {};
+  const initialTemplate: Template = template && typeof template === "object" && Object.keys(template).length > 0 ? JSON.parse(JSON.stringify(template)) : {};
   if (initialTemplate.template && typeof initialTemplate.template === "string") {
     try {
       initialTemplate.template = decodeBase64(initialTemplate.template);
@@ -78,7 +78,7 @@
   }
   initialTemplate.documentDefinitionId = initialTemplate.documentDefinitionId || "brevmal";
 
-  let activeTemplate: TemplateData = $state(initialTemplate);
+  let activeTemplate: Template = $state(initialTemplate);
 
   const mode = $derived(activeTemplate._id ? "edit" : "new");
 
@@ -156,7 +156,7 @@
       const markdown = editor.getMarkdown();
       Sjablong.validateTemplate(markdown);
 
-      const templateRequest: TemplateData = { ...activeTemplate, template: encodeBase64(markdown) };
+      const templateRequest: Template = { ...activeTemplate, template: encodeBase64(markdown) };
       const base64 = await onPreview?.({ template: templateRequest, preview: true });
       if (base64) {
         uiState.previewPdfBase64 = base64;
@@ -191,7 +191,7 @@
       activeTemplate.schema = schema;
     }
 
-    const templateRequest: TemplateData = { ...activeTemplate, template: encodeBase64(markdown) };
+    const templateRequest: Template = { ...activeTemplate, template: encodeBase64(markdown) };
 
     try {
       await onSave?.(templateRequest);
