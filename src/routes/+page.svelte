@@ -2,7 +2,6 @@
   import { fetchMatrikkelEnrichment, saveDispatch } from "$lib/client/dispatchApi";
   import { requestPdfPreview } from "$lib/client/templateApi";
   import DispatchEditor from "$lib/components/DispatchEditor.svelte";
-  import { uiState } from "$lib/state/uiState.svelte";
   import type { PageProps } from "./$types";
 
   let { data }: PageProps = $props();
@@ -10,15 +9,10 @@
 
 <div class="home">
   <div class="intro">
-    <h2 class="ds-heading" data-size="lg">Masseutsendelse</h2>
-    <p class="ds-paragraph text-center">
+    <p class="ds-paragraph info-container">
       Ett verktøy utviklet for Samferdsel og mobilitet sektoren.<br />
       Verktøyet lar deg laste opp en polygon-fil, gjøre oppslag i Matrikkelen og varsle alle eiere som befinner seg innenfor polygonet.
     </p>
-    <div class="actions">
-      <button type="button" class="ds-button" onclick={() => (uiState.isGuideModalOpen = true)}>Se mer</button>
-      <a href="/utsendelser" class="ds-button">Alle utsendelser</a>
-    </div>
   </div>
 
   <div class="editor-wrapper">
@@ -40,24 +34,19 @@
   }
 
   .intro {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  .text-center {
-    text-align: center;
+  .info-container {
+    width: 100%;
     margin-top: 1rem;
-  }
-
-  .actions {
-    display: flex;
-    gap: 1rem;
-    padding-top: 1rem;
   }
 
   .editor-wrapper {
     width: 100%;
-    margin-top: 1rem;
+    margin-top: 3rem;
   }
 </style>
