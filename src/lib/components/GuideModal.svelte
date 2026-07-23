@@ -7,11 +7,12 @@
     if (!dialogElement) {
       return;
     }
+
     if (uiState.isGuideModalOpen) {
-      dialogElement.showModal();
-    } else {
-      dialogElement.close();
+      return dialogElement.showModal();
     }
+
+    dialogElement.close();
   });
 
   const close = (): void => {
@@ -69,6 +70,15 @@
 </dialog>
 
 <style>
+  dialog[open] {
+    width: 80vw;
+    height: 80vh;
+    max-width: 80vw;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+  }
+
   .guide-header {
     display: flex;
     justify-content: space-between;
@@ -76,6 +86,7 @@
   }
 
   .overflow {
+    flex: 1;
     overflow: auto;
     text-align: left;
   }
