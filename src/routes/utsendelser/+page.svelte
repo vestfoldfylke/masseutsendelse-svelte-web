@@ -193,4 +193,13 @@
     display: flex;
     gap: 0.3rem;
   }
+
+  dialog[open] {
+    width: 80vw;
+    height: 80vh;
+    max-width: 80vw;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+  }
 </style>
