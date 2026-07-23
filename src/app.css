@@ -1,2 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600;1,700&display=swap");
 @import "@digdir/designsystemet-css/theme";
 @import "@digdir/designsystemet-css";
+
+html,
+body {
+  font-family: "Nunito Sans", sans-serif, serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
