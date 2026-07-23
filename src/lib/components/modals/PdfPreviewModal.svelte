@@ -7,11 +7,12 @@
     if (!dialogElement) {
       return;
     }
+
     if (uiState.previewPdfBase64 !== undefined) {
-      dialogElement.showModal();
-    } else {
-      dialogElement.close();
+      return dialogElement.showModal();
     }
+
+    dialogElement.close();
   });
 
   const close = (): void => {
@@ -30,6 +31,15 @@
 </dialog>
 
 <style>
+  dialog[open] {
+    width: 90vw;
+    height: 90vh;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+  }
+
   .preview-header {
     display: flex;
     justify-content: space-between;
@@ -37,8 +47,8 @@
   }
 
   .pdf-frame {
-    width: 80vw;
-    height: 80vh;
+    flex: 1;
+    width: 100%;
     border: none;
   }
 </style>
