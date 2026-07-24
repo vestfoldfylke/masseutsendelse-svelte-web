@@ -5,6 +5,7 @@
   import DispatchEditor from "$lib/components/DispatchEditor.svelte";
   import DispatchMap from "$lib/components/Map.svelte";
   import type { Dispatch, DispatchStatus } from "$lib/dispatch/types";
+  import { prettifyDateTime } from "$lib/helpers";
   import { uiState } from "$lib/state/uiState.svelte";
   import type { PageProps } from "./$types";
 
@@ -14,6 +15,7 @@
     _id: string;
     actionName: string;
     createdTimestampReadable: string;
+    modifiedTimestampReadable: string;
     statusReadable: string;
   };
 
@@ -49,23 +51,6 @@
   let editedItem: DispatchFrontend | undefined = $state(undefined);
   let mapItem: DispatchFrontend | undefined = $state(undefined);
 
-  const formatDateString = (dateString: string | undefined): string => {
-    if (!dateString) {
-      return "";
-    }
-
-    try {
-      const date = new Date(dateString);
-      const day = date.getDate().toString().padStart(2, "0");
-      const month = (date.getMonth() + 1).toString().padStart(2, "0");
-      const hour = date.getHours().toString().padStart(2, "0");
-      const minutes = date.getMinutes().toString().padStart(2, "0");
-      return `${day}.${month}.${date.getFullYear()} - ${hour}:${minutes}`;
-    } catch {
-      return dateString;
-    }
-  };
-
   const getFrontendDispatch = (dispatch: Dispatch): DispatchFrontend => {
     if (!dispatch._id) {
       throw new Error("_id missing");
@@ -75,7 +60,8 @@
       ...dispatch,
       _id: dispatch._id,
       actionName: getEditActionName(dispatch),
-      createdTimestampReadable: formatDateString(dispatch.createdTimestamp),
+      createdTimestampReadable: prettifyDateTime(dispatch.createdTimestamp),
+      modifiedTimestampReadable: prettifyDateTime(dispatch.modifiedTimestamp),
       statusReadable: STATUS_LABELS[dispatch.status ?? ""],
     };
   };
@@ -229,7 +215,19 @@
         <tr>
           <td>{item.title}</td>
           <td>{item.projectnumber}</td>
-          <td>{item.createdTimestampReadable}</td>
+          <td>
+            <span class="ds-tag" data-color="neutral" data-size="sm">
+              <button data-popover="inline" popoverTarget="dispatch-{item._id}_date">{item.createdTimestampReadable}</button>
+            </span>
+            <div id="dispatch-{item._id}_date" class="ds-popover" popover="auto" data-placement="top">
+              <b>Opprettet</b><br />
+              {item.createdTimestampReadable}<br />
+              {item.createdBy}<br /><br />
+              <b>Endret</b><br />
+              {item.modifiedTimestampReadable}<br />
+              {item.modifiedBy}
+            </div>
+          </td>
           <td>
             <span class="ds-tag" style="background-color: {STATUS_COLORS[item.status ?? ""]};">
               {item.statusReadable}

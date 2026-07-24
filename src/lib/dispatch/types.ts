@@ -69,6 +69,8 @@ export type Dispatch = {
   createdByDepartment?: string;
   createdBy?: string;
   createdTimestamp?: string;
+  modifiedBy?: string;
+  modifiedTimestamp?: string;
   template: Template;
   attachments: UploadedFileData[];
   owners: Owner[];

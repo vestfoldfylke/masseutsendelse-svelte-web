@@ -8,3 +8,17 @@ export const getFilenameDateTime = (): string => {
 
   return `${day}${month}${year}_${hours}${minutes}`;
 };
+
+export const prettifyDateTime = (date: string | undefined): string => {
+  if (!date) {
+    return "";
+  }
+
+  return new Date(date).toLocaleString("no-NO", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+};
