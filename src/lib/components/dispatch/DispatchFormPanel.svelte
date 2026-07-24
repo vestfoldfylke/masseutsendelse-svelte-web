@@ -63,9 +63,8 @@
 </script>
 
 <div class="card shadow form-panel">
+  <h1 class="ds-heading" data-size="lg">Masseutsendelse</h1>
   <div class="form-inner">
-    <h1 class="ds-heading" data-size="lg">Masseutsendelse</h1>
-
     {#if mode === "edit"}
       <DispatchStatusSelect value={dispatch.status ?? "notapproved"} disabled={isLocked} onChange={onDispatchStatusChange} />
     {/if}
@@ -169,6 +168,7 @@
 <style>
   .card {
     width: 100%;
+    max-width: 1200px;
     border-radius: 20px;
     background-color: var(--ds-color-neutral-background-default, white);
     min-height: 250px;
@@ -180,15 +180,15 @@
   }
 
   .form-panel {
+    width: 60%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
   }
 
   .form-inner {
-    width: 60%;
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 0.75rem;
   }
 
@@ -198,10 +198,9 @@
 
   .template-row {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 1rem;
     width: 100%;
-    max-width: 750px;
   }
 
   .schema-fields-wrapper {

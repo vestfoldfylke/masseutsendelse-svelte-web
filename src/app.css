@@ -5,6 +5,9 @@
 html,
 body {
   font-family: "Nunito Sans", sans-serif, serif;
+  line-height: unset;
+  letter-spacing: unset;
+  font-size: unset;
 }
 
 button,

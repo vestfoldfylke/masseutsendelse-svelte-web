@@ -21,16 +21,19 @@
 </script>
 
 <button type="button" class="icon-button" onclick={() => onClick?.()}>
-  <img src={icon} style="width: 100%" alt="" />
+  <img src={icon} alt="" />
 </button>
 
 <style>
   .icon-button {
     display: block;
-    width: 100%;
     padding: 0;
     border: none;
     background: none;
     cursor: pointer;
+  }
+
+  .icon-button > img {
+    width: 3rem;
   }
 </style>

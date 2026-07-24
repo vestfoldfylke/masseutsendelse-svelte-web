@@ -147,8 +147,8 @@
         </td>
       </tr>
       {#if expandedKeys.has(owner.id)}
-        <tr>
-          <td colspan={type === "excluded" ? 6 : 5}>
+        <tr class="expanded-row">
+          <td colspan={type === "excluded" ? 7 : 6}>
             <div class="owner-detail">
               {#if owner._type?.toLowerCase().includes("juridisk")}
                 <span>Organisasjonsnummer: {owner.nummer}</span>
@@ -156,8 +156,8 @@
                 <span>Personnummer: {owner.nummer}</span>
               {/if}
             </div>
-            <h3 class="ds-heading" data-size="xs">Eierforhold</h3>
-            <table class="ds-table">
+            <h3 class="ds-heading center-text" data-size="sm">Eierforhold</h3>
+            <table class="ds-table inner-table">
               <thead>
                 <tr>
                   <th>Bruksnavn</th>
@@ -171,18 +171,24 @@
                 </tr>
               </thead>
               <tbody>
-                {#each owner.ownerships as ownership, j (j)}
+                {#if owner.ownerships.length > 0}
+                  {#each owner.ownerships as ownership, j (j)}
+                    <tr>
+                      <td>{ownership.unit?.bruksnavn}</td>
+                      <td>{ownership.datoFra}</td>
+                      <td>{ownership.unit?.matrikkelnummer?.kommuneId}</td>
+                      <td>{ownership.unit?.matrikkelnummer?.gardsnummer}</td>
+                      <td>{ownership.unit?.matrikkelnummer?.bruksnummer}</td>
+                      <td>{ownership.unit?.matrikkelnummer?.festenummer}</td>
+                      <td>{formatType(ownership._type)}</td>
+                      <td>{formatShare(ownership.andel)}</td>
+                    </tr>
+                  {/each}
+                {:else}
                   <tr>
-                    <td>{ownership.unit?.bruksnavn}</td>
-                    <td>{ownership.datoFra}</td>
-                    <td>{ownership.unit?.matrikkelnummer?.kommuneId}</td>
-                    <td>{ownership.unit?.matrikkelnummer?.gardsnummer}</td>
-                    <td>{ownership.unit?.matrikkelnummer?.bruksnummer}</td>
-                    <td>{ownership.unit?.matrikkelnummer?.festenummer}</td>
-                    <td>{formatType(ownership._type)}</td>
-                    <td>{formatShare(ownership.andel)}</td>
+                    <td colspan="8" class="no-owner-data">No data available</td>
                   </tr>
-                {/each}
+                {/if}
               </tbody>
             </table>
           </td>
@@ -199,5 +205,25 @@
 
   .owner-detail {
     text-align: left;
+  }
+
+  .expanded-row {
+    background-color: #f5f5f5;
+  }
+
+  .ds-table > tbody > tr:last-child > td {
+    border-bottom: 0;
+  }
+
+  .inner-table {
+    margin-bottom: 1rem;
+  }
+
+  .no-owner-data, .center-text {
+    text-align: center;
+  }
+
+  .no-owner-data {
+    padding-top: 2rem;
   }
 </style>

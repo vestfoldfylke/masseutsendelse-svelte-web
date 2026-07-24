@@ -59,8 +59,8 @@
 <style>
   .wrapper {
     background-color: #bacdd4;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
   }
 
   .table-row:nth-child(even) {
