@@ -56,7 +56,17 @@
   }}
 >
   {#if error}
-    Viser error: {error.message}
     <ErrorField {error} {showResetButton} {showOkButton} onOk={close} />
   {/if}
 </dialog>
+
+<style>
+  dialog[open] {
+    width: 80vw;
+    height: 80vh;
+    max-width: 80vw;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+  }
+</style>

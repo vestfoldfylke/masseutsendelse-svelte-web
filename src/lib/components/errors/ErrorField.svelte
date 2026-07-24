@@ -24,8 +24,6 @@
 
   let { error, defaultTitle = "En feil har oppstått", showResetButton = true, showOkButton = false, onReset, onOk }: Props = $props();
 
-  let isShowStack = $state(false);
-
   const statusCode = $derived(error.statusCode ?? error.status ?? "");
   const title = $derived(error.response?.data?.title ?? "");
   const message = $derived(error.response?.data?.message ?? error.message ?? "");
@@ -53,7 +51,7 @@
       {/each}
     </ul>
   {/if}
-  {#if isShowStack && stack}
+  {#if stack}
     <div class="stack-field">
       <h3 class="ds-heading" data-size="xs">Detaljer</h3>
       <p class="ds-paragraph">{stack}</p>
@@ -66,17 +64,12 @@
     {#if showOkButton}
       <button type="button" class="ds-button" data-size="sm" onclick={() => onOk?.()}>Ok</button>
     {/if}
-    {#if error.stack}
-      <button type="button" class="ds-button" data-size="sm" data-variant="secondary" onclick={() => (isShowStack = !isShowStack)}>
-        {isShowStack ? "Skjul detaljer" : "Vis detaljer"}
-      </button>
-    {/if}
   </div>
 </div>
 
 <style>
   .error-card {
-    width: 100%;
+    height: 100%;
     border-radius: 10px;
     padding: 1rem;
     background-color: #f8d3d1;
