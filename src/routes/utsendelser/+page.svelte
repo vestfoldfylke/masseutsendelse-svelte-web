@@ -4,29 +4,50 @@
   import { requestPdfPreview } from "$lib/client/templateApi";
   import DispatchEditor from "$lib/components/DispatchEditor.svelte";
   import DispatchMap from "$lib/components/Map.svelte";
-  import type { Dispatch } from "$lib/dispatch/types";
+  import type { Dispatch, DispatchStatus } from "$lib/dispatch/types";
   import { uiState } from "$lib/state/uiState.svelte";
   import type { PageProps } from "./$types";
 
   let { data }: PageProps = $props();
 
-  const STATUS_COLORS: Record<string, string> = {
+  type DispatchFrontend = Omit<Dispatch, "_id"> & {
+    _id: string;
+    actionName: string;
+    createdTimestampReadable: string;
+    statusReadable: string;
+  };
+
+  type SortName = "project"
+    | "projectNumber"
+    | "date"
+    | "status"
+    | "createdBy";
+
+  type SortDirection = "ascending"
+    | "descending"
+    | "none";
+
+  const STATUS_COLORS: Record<DispatchStatus | "", string> = {
     approved: "#D0C788",
     notapproved: "#E7827E",
     completed: "#91B99F",
-    inprogress: "#E0C38B"
+    inprogress: "#E0C38B",
+    "": "#FF006F"
   };
 
-  const STATUS_LABELS: Record<string, string> = {
+  const STATUS_LABELS: Record<DispatchStatus | "", string> = {
     completed: "Fullført",
     inprogress: "Utsendelse Pågår",
     approved: "Godkjent",
-    notapproved: "Under Behandling"
+    notapproved: "Under Behandling",
+    "": "Ukjent 🤷‍♂️"
   };
 
   let search = $state("");
-  let editedItem: Dispatch | undefined = $state(undefined);
-  let mapItem: Dispatch | undefined = $state(undefined);
+  let sortBy: string = $state("date");
+  let sortDirection: SortDirection = $state("descending");
+  let editedItem: DispatchFrontend | undefined = $state(undefined);
+  let mapItem: DispatchFrontend | undefined = $state(undefined);
 
   const formatDateString = (dateString: string | undefined): string => {
     if (!dateString) {
@@ -45,26 +66,84 @@
     }
   };
 
-  const filteredDispatches = $derived.by(() => {
+  const getFrontendDispatch = (dispatch: Dispatch): DispatchFrontend => {
+    if (!dispatch._id) {
+      throw new Error("_id missing");
+    }
+
+    return {
+      ...dispatch,
+      _id: dispatch._id,
+      actionName: getEditActionName(dispatch),
+      createdTimestampReadable: formatDateString(dispatch.createdTimestamp),
+      statusReadable: STATUS_LABELS[dispatch.status ?? ""],
+    };
+  };
+
+  const sortFilteredDispatches = (dispatches: DispatchFrontend[]): DispatchFrontend[] => {
+    return dispatches.sort((a: DispatchFrontend, b: DispatchFrontend) => {
+      switch (sortBy) {
+        case "project":
+          return sortDirection === "ascending"
+            ? a.title.localeCompare(b.title)
+            : b.title.localeCompare(a.title);
+        case "projectNumber":
+          return sortDirection === "ascending"
+            ? a.projectnumber.localeCompare(b.projectnumber)
+            : b.projectnumber.localeCompare(a.projectnumber);
+        case "date": {
+          if (!a.createdTimestamp || !b.createdTimestamp) {
+            return 0;
+          }
+
+          const value: number = sortDirection === "ascending"
+            ? Date.parse(a.createdTimestamp) - Date.parse(b.createdTimestamp)
+            : Date.parse(b.createdTimestamp) - Date.parse(a.createdTimestamp);
+
+          if (value < 0) {
+            return -1;
+          }
+
+          if (value > 0) {
+            return 1;
+          }
+
+          return 0;
+        }
+        case "status":
+          return sortDirection === "ascending"
+            ? a.statusReadable.localeCompare(b.statusReadable)
+            : b.statusReadable.localeCompare(a.statusReadable);
+        case "createdBy": {
+          if (!a.createdBy || !b.createdBy) {
+            return 0;
+          }
+
+          return sortDirection === "ascending"
+            ? a.createdBy.localeCompare(b.createdBy)
+            : b.createdBy.localeCompare(a.createdBy);
+        }
+        default:
+          return 0;
+      }
+    });
+  }
+
+  const filteredDispatches: DispatchFrontend[] = $derived.by(() => {
     if (!search) {
-      return data.dispatches;
+      return sortFilteredDispatches(data.dispatches.map<DispatchFrontend>((dispatch: Dispatch) => getFrontendDispatch(dispatch)));
     }
 
     const term = search.toUpperCase();
-    return data.dispatches.filter((dispatch) => {
-      const searchable = {
-        ...dispatch,
-        status: STATUS_LABELS[dispatch.status ?? ""] ?? dispatch.status,
-        createdTimestamp: formatDateString((dispatch as Dispatch & { createdTimestamp?: string }).createdTimestamp)
-      };
-      return Object.values(searchable).some((value) => value !== undefined && value !== null && String(value).toUpperCase().includes(term));
-    });
+    return sortFilteredDispatches(data.dispatches
+      .map((dispatch: Dispatch) => getFrontendDispatch(dispatch))
+      .filter((dispatch: DispatchFrontend) => Object.values(dispatch).some((value) => value !== undefined && value !== null && String(value).toUpperCase().includes(term))));
   });
 
-  const editItem = async (item: Dispatch & { _id: string }): Promise<void> => {
+  const editItem = async (item: DispatchFrontend): Promise<void> => {
     uiState.loadingModal = { title: "Laster utsendelsen" };
     try {
-      editedItem = await fetchDispatchById(item._id);
+      editedItem = getFrontendDispatch(await fetchDispatchById(item._id));
     } catch (err) {
       uiState.globalError = err as never;
     } finally {
@@ -110,24 +189,38 @@
       ? "Rediger"
       : "Vis";
   }
+
+  const handleSortBy = (sortName: SortName): void => {
+    sortBy = sortName;
+    sortDirection = sortDirection === "descending" ? "ascending" : "descending";
+  }
 </script>
 
 <div class="container">
   <h2 class="ds-heading" data-size="lg">Utsendelser</h2>
 
   <div class="ds-field search-field">
-    <label class="ds-label" for="dispatch-search">Søk i tabell</label>
     <input id="dispatch-search" class="ds-input" bind:value={search} placeholder="Søk i tabell" />
   </div>
 
   <table class="ds-table shadow" data-hover>
     <thead>
       <tr>
-        <th>Prosjekt</th>
-        <th>Prosjekt Nr</th>
-        <th>Dato</th>
-        <th>Status</th>
-        <th>Saksbehandler</th>
+        <th aria-sort={sortBy === "project" ? sortDirection : "none"}>
+          <button type="button" onclick={() => handleSortBy("project")}>Prosjekt</button>
+        </th>
+        <th aria-sort={sortBy === "projectNumber" ? sortDirection : "none"}>
+          <button type="button" onclick={() => handleSortBy("projectNumber")}>Prosjekt Nr</button>
+        </th>
+        <th aria-sort={sortBy === "date" ? sortDirection : "none"}>
+          <button type="button" onclick={() => handleSortBy("date")}>Dato</button>
+        </th>
+        <th aria-sort={sortBy === "status" ? sortDirection : "none"}>
+          <button type="button" onclick={() => handleSortBy("status")}>Status</button>
+        </th>
+        <th aria-sort={sortBy === "createdBy" ? sortDirection : "none"}>
+          <button type="button" onclick={() => handleSortBy("createdBy")}>Saksbehandler</button>
+        </th>
         <th>Handlinger</th>
       </tr>
     </thead>
@@ -136,18 +229,18 @@
         <tr>
           <td>{item.title}</td>
           <td>{item.projectnumber}</td>
-          <td>{formatDateString((item as Dispatch & { createdTimestamp?: string }).createdTimestamp)}</td>
+          <td>{item.createdTimestampReadable}</td>
           <td>
-            <span class="ds-tag" style="background-color: {STATUS_COLORS[item.status ?? ''] ?? '#ffffff'};">
-              {STATUS_LABELS[item.status ?? ""] ?? item.status}
+            <span class="ds-tag" style="background-color: {STATUS_COLORS[item.status ?? ""]};">
+              {item.statusReadable}
             </span>
           </td>
           <td>{item.createdBy}</td>
           <td class="actions">
-            <button type="button" class="ds-button" data-variant="tertiary" data-icon onclick={() => editItem(item as Dispatch & { _id: string })} aria-label={getEditActionName(item)} title={getEditActionName(item)}>✏️</button>
-            <button type="button" class="ds-button" data-variant="tertiary" data-icon disabled={!item.template?._id} onclick={() => previewPdf(item)} aria-label="Forhåndsvisning" title="Forhåndsvisning">🔍</button>
-            <button type="button" class="ds-button" data-variant="tertiary" data-icon onclick={() => (mapItem = item)} aria-label="Se kart" title="Se kart">🗺️</button>
-            <button type="button" class="ds-button" data-variant="tertiary" data-icon disabled={!item.archiveUrl} onclick={() => openArchiveUrl(item.archiveUrl)} aria-label="Se arkiv" title="Se arkiv">🗄️</button>
+            <button type="button" class="ds-button" data-variant="tertiary" data-icon onclick={() => editItem(item)} aria-label={item.actionName} data-tooltip={item.actionName}>✏️</button>
+            <button type="button" class="ds-button" data-variant="tertiary" data-icon disabled={!item.template?._id} onclick={() => previewPdf(item)} aria-label="Forhåndsvisning" data-tooltip="Forhåndsvisning">🔍</button>
+            <button type="button" class="ds-button" data-variant="tertiary" data-icon onclick={() => (mapItem = item)} aria-label="Se kart" data-tooltip="Se kart">🗺️</button>
+            <button type="button" class="ds-button" data-variant="tertiary" data-icon disabled={!item.archiveUrl} onclick={() => openArchiveUrl(item.archiveUrl)} aria-label="Se arkiv" data-tooltip="Se arkiv">🗄️</button>
           </td>
         </tr>
       {:else}
@@ -162,7 +255,7 @@
 {#if editedItem}
   <dialog class="ds-dialog" data-placement="center" id="dispatch-modal" open onclose={() => (editedItem = undefined)}>
     <div class="dialog-header">
-      <h2 class="ds-heading" data-size="md">{getEditActionName(editedItem)} utsendelse</h2>
+      <h2 class="ds-heading" data-size="md">{editedItem.actionName} utsendelse</h2>
       <button class="ds-button close-dialog-button" data-icon="true" data-variant="tertiary" type="button" aria-label="Lukk dialogvindu" data-color="neutral" command="close" commandfor="dispatch-modal"></button>
     </div>
 

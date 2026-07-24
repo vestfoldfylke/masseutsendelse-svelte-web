@@ -68,6 +68,7 @@ export type Dispatch = {
   archiveUrl?: string;
   createdByDepartment?: string;
   createdBy?: string;
+  createdTimestamp?: string;
   template: Template;
   attachments: UploadedFileData[];
   owners: Owner[];
