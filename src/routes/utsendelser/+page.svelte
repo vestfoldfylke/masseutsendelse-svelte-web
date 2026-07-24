@@ -7,6 +7,7 @@
   import type { Dispatch, DispatchStatus } from "$lib/dispatch/types";
   import { prettifyDateTime } from "$lib/helpers";
   import { uiState } from "$lib/state/uiState.svelte";
+  import type { SortDirection } from "$lib/types/table.types";
   import type { PageProps } from "./$types";
 
   let { data }: PageProps = $props();
@@ -24,10 +25,6 @@
     | "date"
     | "status"
     | "createdBy";
-
-  type SortDirection = "ascending"
-    | "descending"
-    | "none";
 
   const STATUS_COLORS: Record<DispatchStatus | "", string> = {
     approved: "#D0C788",

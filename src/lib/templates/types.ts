@@ -9,4 +9,8 @@ export type Template = {
   data?: Record<string, unknown>;
   template?: string;
   schema?: object;
+  createdTimestamp?: string;
+  createdBy?: string;
+  modifiedTimestamp?: string;
+  modifiedBy?: string;
 };

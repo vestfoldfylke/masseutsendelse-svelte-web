@@ -2,16 +2,81 @@
   import { invalidateAll } from "$app/navigation";
   import { requestPdfPreview, saveTemplate } from "$lib/client/templateApi";
   import TemplateEditor from "$lib/components/TemplateEditor.svelte";
+  import { prettifyDateTime } from "$lib/helpers";
   import { uiState } from "$lib/state/uiState.svelte";
   import type { Template } from "$lib/templates/types";
+  import type { SortDirection } from "$lib/types/table.types";
   import type { PageProps } from "./$types";
 
   let { data }: PageProps = $props();
 
+  type TemplateFrontend = Omit<Template, "name" | "description"> & {
+    name: string;
+    description: string;
+    createdTimestampReadable: string;
+    modifiedTimestampReadable: string;
+  };
+
+  type SortName = "name"
+    | "description"
+    | "date";
+
+  let sortBy: string = $state("name");
+  let sortDirection: SortDirection = $state("ascending");
   let isShowEditor = $state(false);
   let activeTemplate: Template | undefined = $state(undefined);
 
-  let templates: Template[] = $derived.by(() => data.templates);
+  const getFrontendTemplate = (template: Template): TemplateFrontend => {
+    if (!template.name || !template.description) {
+      throw new Error("Template name and description is required");
+    }
+
+    return {
+      ...template,
+      name: template.name,
+      description: template.description,
+      createdTimestampReadable: prettifyDateTime(template.createdTimestamp),
+      modifiedTimestampReadable: prettifyDateTime(template.modifiedTimestamp),
+    };
+  };
+
+  let templates: TemplateFrontend[] = $derived.by(() => {
+    return data.templates
+      .map((template: Template) => getFrontendTemplate(template))
+      .sort((a: TemplateFrontend, b: TemplateFrontend) => {
+        switch (sortBy) {
+          case "name":
+            return sortDirection === "ascending"
+              ? a.name.localeCompare(b.name)
+              : b.name.localeCompare(a.name);
+          case "description":
+            return sortDirection === "ascending"
+              ? a.description.localeCompare(b.description)
+              : b.description.localeCompare(a.description);
+          case "date": {
+            if (!a.createdTimestamp || !b.createdTimestamp) {
+              return 0;
+            }
+
+            const value: number = sortDirection === "ascending"
+              ? Date.parse(a.createdTimestamp) - Date.parse(b.createdTimestamp)
+              : Date.parse(b.createdTimestamp) - Date.parse(a.createdTimestamp);
+
+            if (value < 0) {
+              return -1;
+            }
+
+            if (value > 0) {
+              return 1;
+            }
+
+            return 0;
+          }
+          default:
+            return 0;
+        }
+      });
+  });
 
   const openTemplateEditor = (template?: Template): void => {
     activeTemplate = template ? JSON.parse(JSON.stringify(template)) : {};
@@ -39,6 +104,11 @@
       uiState.globalError = err as never;
     }
   };
+
+  const handleSortBy = (sortName: SortName): void => {
+    sortBy = sortName;
+    sortDirection = sortDirection === "descending" ? "ascending" : "descending";
+  }
 </script>
 
 <div class="container">
@@ -50,8 +120,15 @@
   <table class="ds-table shadow" data-hover>
     <thead>
       <tr>
-        <th>Navn</th>
-        <th>Beskrivelse</th>
+        <th aria-sort={sortBy === "name" ? sortDirection : "none"}>
+          <button type="button" onclick={() => handleSortBy("name")}>Navn</button>
+        </th>
+        <th aria-sort={sortBy === "description" ? sortDirection : "none"}>
+          <button type="button" onclick={() => handleSortBy("description")}>Beskrivelse</button>
+        </th>
+        <th aria-sort={sortBy === "date" ? sortDirection : "none"}>
+          <button type="button" onclick={() => handleSortBy("date")}>Dato</button>
+        </th>
         <th>Handlinger</th>
       </tr>
     </thead>
@@ -60,9 +137,22 @@
         <tr>
           <td>{template.name}</td>
           <td>{template.description}</td>
+          <td>
+            <span class="ds-tag" data-color="neutral" data-size="sm">
+              <button data-popover="inline" popoverTarget="template-{template._id}_date">{template.createdTimestampReadable}</button>
+            </span>
+            <div id="template-{template._id}_date" class="ds-popover" popover="auto" data-placement="top">
+              <b>Opprettet</b><br />
+              {template.createdTimestampReadable}<br />
+              {template.createdBy}<br /><br />
+              <b>Endret</b><br />
+              {template.modifiedTimestampReadable}<br />
+              {template.modifiedBy}
+            </div>
+          </td>
           <td class="actions">
-            <button type="button" class="ds-button" data-variant="tertiary" data-icon onclick={() => previewTemplate(template)} aria-label="Forhåndsvisning" title="Forhåndsvisning">🔍</button>
             <button type="button" class="ds-button" data-variant="tertiary" data-icon onclick={() => openTemplateEditor(template)} aria-label="Rediger" title="Rediger">✏️</button>
+            <button type="button" class="ds-button" data-variant="tertiary" data-icon onclick={() => previewTemplate(template)} aria-label="Forhåndsvisning" title="Forhåndsvisning">🔍</button>
           </td>
         </tr>
       {/each}
