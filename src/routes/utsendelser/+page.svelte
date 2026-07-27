@@ -17,6 +17,9 @@
     actionName: string;
     createdTimestampReadable: string;
     modifiedTimestampReadable: string;
+    approvedTimestampReadable?: string;
+    inProgressTimestampReadable?: string;
+    completedTimestampReadable?: string;
     statusReadable: string;
   };
 
@@ -55,6 +58,9 @@
       actionName: getEditActionName(dispatch),
       createdTimestampReadable: prettifyDateTime(dispatch.createdTimestamp),
       modifiedTimestampReadable: prettifyDateTime(dispatch.modifiedTimestamp),
+      approvedTimestampReadable: dispatch.approvedTimestamp ? prettifyDateTime(dispatch.approvedTimestamp) : undefined,
+      inProgressTimestampReadable: dispatch.inProgressTimestamp ? prettifyDateTime(dispatch.inProgressTimestamp) : undefined,
+      completedTimestampReadable: dispatch.completedTimestamp ? prettifyDateTime(dispatch.completedTimestamp) : undefined,
       statusReadable: STATUS_LABELS[dispatch.status ?? ""]
     };
   };
@@ -209,6 +215,25 @@
               <b>Endret</b><br />
               {item.modifiedTimestampReadable}<br />
               {item.modifiedBy}
+
+              {#if item.approvedTimestampReadable}
+                <br /><br />
+                <b>Godkjent</b><br />
+                {item.approvedTimestampReadable}<br />
+                {item.approvedBy ?? ""}
+              {/if}
+
+              {#if item.inProgressTimestampReadable}
+                <br /><br />
+                <b>Startet</b><br />
+                {item.inProgressTimestampReadable}
+              {/if}
+
+              {#if item.completedTimestampReadable}
+                <br /><br />
+                <b>Ferdig</b><br />
+                {item.completedTimestampReadable}
+              {/if}
             </div>
           </td>
           <td>

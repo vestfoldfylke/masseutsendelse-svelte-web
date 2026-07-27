@@ -78,4 +78,8 @@ export type Dispatch = {
   matrikkelUnitsWithoutOwners: MatrikkelUnit[];
   stats: DispatchStats;
   polygons?: ParsedPolygonFile;
+  approvedBy?: string;
+  approvedTimestamp?: string;
+  inProgressTimestamp?: string;
+  completedTimestamp?: string;
 };
