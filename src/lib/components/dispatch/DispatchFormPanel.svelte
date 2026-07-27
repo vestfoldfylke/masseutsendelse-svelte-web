@@ -147,7 +147,7 @@
             checked={isDispatchApproved}
             onchange={(event) => onDispatchApprovedChange(event.currentTarget.checked)}
           />
-          <label class="ds-label" for="dispatch-approved">Følgende informasjon skal sendes ut til {dispatch.owners.length} mottakere</label>
+          <label class="ds-label" for="dispatch-approved">Følgende informasjon skal sendes ut til {dispatch.owners.length} {dispatch.owners.length === 1 ? "mottaker" : "mottakere"}</label>
         </div>
       </div>
     {/if}

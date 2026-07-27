@@ -132,11 +132,10 @@
             id={`schema-field-${i}`}
             class="ds-input"
             rows={property.lines}
-            value={getInitialData(property.path)}
             oninput={(event) => updateData(property.path, event.currentTarget.value)}
             required={property.required}
             disabled={disabled || property.disabled}
-          ></textarea>
+          >{getInitialData(property.path)}</textarea>
           {#if property.description}
             <div class="ds-paragraph" data-size="xs">{property.description}</div>
           {/if}
