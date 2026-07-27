@@ -51,8 +51,21 @@
   let isContactingMatrikkel: boolean = $state(false);
   let isMatrikkelApproved: boolean = $state(false);
   let isDispatchApproved: boolean = $state(false);
-  let isRequiredTemplateDataFilledIn: boolean = $state(false);
   let selectedTemplateSchema: object | undefined = $state(undefined);
+
+  const isRequiredTemplateDataFilledIn: boolean = $derived.by(() => {
+    const schemaProperties = (selectedTemplateSchema as { properties?: Record<string, unknown> } | undefined)?.properties;
+    if (!selectedTemplateSchema || (schemaProperties && Object.keys(schemaProperties).length === 0)) {
+      return true;
+    }
+
+    try {
+      Sjablong.validateData($state.snapshot(selectedTemplateSchema), $state.snapshot(dispatch.template.data) ?? {}, { requireAll: true });
+      return true;
+    } catch {
+      return false;
+    }
+  });
 
   const mode = $derived<"new" | "edit">(dispatch._id === undefined ? "new" : "edit");
   const isLocked: boolean = $derived(dispatch.status === "inprogress" || dispatch.status === "completed");
@@ -83,25 +96,6 @@
 
     return !(mode === "new" && (!isDispatchApproved || !isMatrikkelApproved));
   });
-
-  const determineIfTemplateIsOk = (): void => {
-    const schemaProperties = (selectedTemplateSchema as { properties?: Record<string, unknown> } | undefined)?.properties;
-    if (!selectedTemplateSchema || (schemaProperties && Object.keys(schemaProperties).length === 0)) {
-      isRequiredTemplateDataFilledIn = true;
-      return;
-    }
-
-    try {
-      Sjablong.validateData(selectedTemplateSchema, dispatch.template.data ?? {}, { requireAll: true });
-      isRequiredTemplateDataFilledIn = true;
-    } catch {
-      isRequiredTemplateDataFilledIn = false;
-    }
-  };
-
-  const onTemplateDataChanged = (): void => {
-    determineIfTemplateIsOk();
-  };
 
   const updateAttachmentTags = (): void => {
     if (dispatch.attachments.length <= 0) {
@@ -135,7 +129,6 @@
     }
 
     dispatch.template = { ...template, data: templateData };
-    onTemplateDataChanged();
     updateAttachmentTags();
   };
 
@@ -282,7 +275,6 @@
     onTemplateChanged(matchingTemplate ?? dispatch.template);
   }
 
-  onTemplateDataChanged();
   updateAttachmentTags();
 </script>
 
@@ -323,7 +315,6 @@
         {onDispatchStatusChange}
         onTemplateChange={onTemplateChanged}
         {onRemoveTemplate}
-        {onTemplateDataChanged}
         onAttachmentsChanged={() => onAttachmentsChanged()}
         {onDownloadAttachment}
         onDispatchApprovedChange={(approved) => (isDispatchApproved = approved)}

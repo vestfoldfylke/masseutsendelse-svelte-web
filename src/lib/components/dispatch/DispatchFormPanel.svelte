@@ -18,7 +18,6 @@
     onDispatchStatusChange: (status: DispatchStatus) => void;
     onTemplateChange: (template: Template | undefined) => void;
     onRemoveTemplate: () => void;
-    onTemplateDataChanged: () => void;
     onAttachmentsChanged: (attachments: UploadedFileData[]) => void;
     onDownloadAttachment: (file: UploadedFileData) => void;
     onDispatchApprovedChange: (approved: boolean) => void;
@@ -40,7 +39,6 @@
     onDispatchStatusChange,
     onTemplateChange,
     onRemoveTemplate,
-    onTemplateDataChanged,
     onAttachmentsChanged,
     onDownloadAttachment,
     onDispatchApprovedChange,
@@ -111,7 +109,7 @@
     {#if selectedTemplateSchema && "properties" in selectedTemplateSchema && Object.keys((selectedTemplateSchema as { properties: object }).properties).length > 0}
       <div class="schema-fields-wrapper">
         <h2 class="ds-heading" data-size="md">Flettefelter</h2>
-        <SchemaFields bind:value={dispatch.template.data} schema={selectedTemplateSchema} disabled={isReadOnly} onError={() => onTemplateDataChanged()} />
+        <SchemaFields bind:value={dispatch.template.data} schema={selectedTemplateSchema} disabled={isReadOnly} />
       </div>
     {/if}
 
