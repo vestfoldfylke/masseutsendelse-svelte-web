@@ -12,6 +12,7 @@
     isReadOnly: boolean;
     isLocked: boolean;
     isReadyToSave: boolean;
+    isSaving: boolean;
     isDispatchApproved: boolean;
     templates: Template[];
     selectedTemplateSchema?: object;
@@ -33,6 +34,7 @@
     isReadOnly,
     isLocked,
     isReadyToSave,
+    isSaving,
     isDispatchApproved,
     templates,
     selectedTemplateSchema,
@@ -151,13 +153,19 @@
     {/if}
 
     <div class="actions">
-      <button type="button" class="ds-button" data-variant="secondary" data-size="sm" disabled={!isReadyToSave} onclick={onSave}>
+      <button type="button" class="ds-button" data-variant="secondary" data-size="sm" disabled={!isReadyToSave || isSaving} onclick={onSave}>
+        {#if isSaving}
+          <svg class="ds-spinner" data-size="2xs" role="img" aria-label="Lagrer" viewBox="0 0 50 50">
+            <circle class="ds-spinner__background" cx="25" cy="25" r="20" fill="none" stroke-width="5" />
+            <circle class="ds-spinner__circle" cx="25" cy="25" r="20" fill="none" stroke-width="5" />
+          </svg>
+        {/if}
         {mode === "new" ? "Send til godkjenning" : "Lagre"}
       </button>
       {#if mode === "new"}
-        <button type="button" class="ds-button" data-variant="secondary" data-size="sm" onclick={onReset}>Start på nytt</button>
+        <button type="button" class="ds-button" data-variant="secondary" data-size="sm" disabled={isSaving} onclick={onReset}>Start på nytt</button>
       {:else}
-        <button type="button" class="ds-button" data-variant="secondary" data-size="sm" onclick={onClose}>Lukk</button>
+        <button type="button" class="ds-button" data-variant="secondary" data-size="sm" disabled={isSaving} onclick={onClose}>Lukk</button>
       {/if}
     </div>
   </div>

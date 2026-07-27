@@ -51,6 +51,7 @@
   let isContactingMatrikkel: boolean = $state(false);
   let isMatrikkelApproved: boolean = $state(false);
   let isDispatchApproved: boolean = $state(false);
+  let isSaving: boolean = $state(false);
   let selectedTemplateSchema: object | undefined = $state(undefined);
 
   const isRequiredTemplateDataFilledIn: boolean = $derived.by(() => {
@@ -257,10 +258,13 @@
     }
 
     try {
+      isSaving = true;
       await onSave(dispatch);
       onSaved?.();
     } catch (err) {
       error = err as ErrorLike;
+    } finally {
+      isSaving = false;
     }
   };
 
@@ -309,6 +313,7 @@
         {isReadOnly}
         {isLocked}
         {isReadyToSave}
+        {isSaving}
         {isDispatchApproved}
         {templates}
         {selectedTemplateSchema}

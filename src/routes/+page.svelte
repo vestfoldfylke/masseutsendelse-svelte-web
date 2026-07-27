@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { fetchMatrikkelEnrichment, saveDispatch } from "$lib/client/dispatchApi";
   import { requestPdfPreview } from "$lib/client/templateApi";
   import DispatchEditor from "$lib/components/DispatchEditor.svelte";
@@ -22,6 +23,7 @@
       onSave={saveDispatch}
       onPreview={requestPdfPreview}
       onDownloadAttachment={() => {}}
+      onSaved={() => goto("/utsendelser")}
     />
   </div>
 </div>
