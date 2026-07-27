@@ -1,7 +1,7 @@
 <script lang="ts">
   import Sjablong from "@vtfk/sjablong";
   import { untrack } from "svelte";
-  import { AppError } from "$lib/errors/AppError";
+  import { AppError, type ErrorLike } from "$lib/errors/AppError";
   import { deepMerge, getPath, setPath, unsetPath } from "$lib/objectUtils";
   import ErrorField from "./errors/ErrorField.svelte";
 
@@ -13,20 +13,6 @@
     lines?: number;
     required?: boolean;
     disabled?: boolean;
-  };
-
-  type ErrorLike = Error & {
-    statusCode?: number;
-    status?: number;
-    errors?: string[];
-    response?: {
-      data?: {
-        title?: string;
-        message?: string;
-        errors?: string | string[];
-        stack?: string;
-      };
-    };
   };
 
   type Props = {

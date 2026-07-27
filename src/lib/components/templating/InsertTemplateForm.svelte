@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { AppError } from "$lib/errors/AppError";
+  import { AppError, type ErrorLike } from "$lib/errors/AppError";
   import ErrorField from "../errors/ErrorField.svelte";
 
   type PlaceholderType = "string" | "multistring";
@@ -11,20 +11,6 @@
     required: boolean;
     lines?: number;
     path: string;
-  };
-
-  type ErrorLike = Error & {
-    statusCode?: number;
-    status?: number;
-    errors?: string[];
-    response?: {
-      data?: {
-        title?: string;
-        message?: string;
-        errors?: string | string[];
-        stack?: string;
-      };
-    };
   };
 
   type Props = {

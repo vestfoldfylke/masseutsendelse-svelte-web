@@ -2,34 +2,20 @@
   import Sjablong from "@vtfk/sjablong";
   import { decodeBase64 } from "$lib/base64";
   import { createEmptyDispatch, type Dispatch, type DispatchStatus, type Owner } from "$lib/dispatch/types";
-  import { AppError } from "$lib/errors/AppError";
+  import { AppError, type ErrorLike } from "$lib/errors/AppError";
   import { deepMerge, pickKeys } from "$lib/objectUtils";
   import { type ParsedPolygon, parsePolygonFile } from "$lib/polyparser/polyparser";
   import type { EnrichedMatrikkelData } from "$lib/server/matrikkelEnrichment";
   import { uiState } from "$lib/state/uiState.svelte";
   import type { Template } from "$lib/templates/types";
   import type { MatrikkelEnhet } from "$lib/types/matrikkel.types";
+  import type { PdfPreviewRequest } from "$lib/types/pdf.types";
   import type { UploadedFileData } from "$lib/uploader/types";
   import DispatchFormPanel from "./dispatch/DispatchFormPanel.svelte";
   import DispatchMatrikkelPanel from "./dispatch/DispatchMatrikkelPanel.svelte";
   import DispatchUploadStep from "./dispatch/DispatchUploadStep.svelte";
   import ErrorField from "./errors/ErrorField.svelte";
   import Loading from "./Loading.svelte";
-
-  type ErrorLike = Error & {
-    statusCode?: number;
-    status?: number;
-    errors?: string[];
-    response?: { data?: { title?: string; message?: string; errors?: string | string[]; stack?: string } };
-  };
-
-  type PdfPreviewRequest = {
-    attachments?: UploadedFileData[];
-    createdByDepartment?: string;
-    archivenumber?: string;
-    createdBy?: string;
-    template: Template;
-  };
 
   type Props = {
     dispatch?: Dispatch;

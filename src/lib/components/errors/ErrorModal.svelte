@@ -1,19 +1,6 @@
 <script lang="ts">
+  import type { ErrorLike } from "$lib/errors/AppError";
   import ErrorField from "./ErrorField.svelte";
-
-  type ErrorLike = Error & {
-    statusCode?: number;
-    status?: number;
-    errors?: string[];
-    response?: {
-      data?: {
-        title?: string;
-        message?: string;
-        errors?: string | string[];
-        stack?: string;
-      };
-    };
-  };
 
   type Props = {
     error: ErrorLike | undefined;

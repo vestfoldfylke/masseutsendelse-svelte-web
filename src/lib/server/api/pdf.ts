@@ -1,20 +1,7 @@
 import type { RequestEvent } from "@sveltejs/kit";
 import { deepMerge } from "$lib/objectUtils";
+import type { PdfPreviewRequest, PdfPreviewResponse } from "$lib/types/pdf.types";
 import { callApi } from "./client";
-
-export type PdfPreviewRequest = {
-  attachments?: unknown;
-  createdByDepartment?: string;
-  archivenumber?: string;
-  createdBy?: string;
-  template: {
-    template: string;
-    name: string;
-    documentDefinitionId?: string;
-    data?: Record<string, unknown>;
-    documentData?: Record<string, unknown>;
-  };
-};
 
 export const getPdfPreview = async (event: RequestEvent, req: PdfPreviewRequest): Promise<string> => {
   let data: Record<string, unknown> = deepMerge<Record<string, unknown>>({ attachments: req.attachments }, req.template.data);
@@ -27,7 +14,7 @@ export const getPdfPreview = async (event: RequestEvent, req: PdfPreviewRequest)
     }
   });
 
-  const response = await callApi<{ base64: string }>(event, "generatePDF", {
+  const response: PdfPreviewResponse = await callApi<PdfPreviewResponse>(event, "generatePDF", {
     method: "POST",
     body: {
       preview: true,

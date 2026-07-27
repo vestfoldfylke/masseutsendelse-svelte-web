@@ -3,7 +3,9 @@ import type { EnrichedMatrikkelData } from "$lib/server/matrikkelEnrichment";
 import type { MatrikkelEnhet } from "$lib/types/matrikkel.types";
 import { clientApiFetch } from "./apiFetch";
 
-export const fetchDispatches = (): Promise<Dispatch[]> => clientApiFetch<Dispatch[]>("/api/dispatches");
+type AttachmentDownloadResponse = {
+  data?: string;
+};
 
 export const fetchDispatchById = (id: string): Promise<Dispatch> => clientApiFetch<Dispatch>(`/api/dispatches/${id}`);
 
@@ -29,7 +31,7 @@ export const fetchMatrikkelEnrichment = (polygons: MatrikkelEnhet[]): Promise<En
   });
 
 export const triggerAttachmentDownload = async (dispatchId: string, filename: string): Promise<void> => {
-  const result: { data?: string } = await clientApiFetch<{ data?: string }>(`/api/blobs/${dispatchId}/${filename}`);
+  const result: AttachmentDownloadResponse = await clientApiFetch<AttachmentDownloadResponse>(`/api/blobs/${dispatchId}/${filename}`);
   if (!result.data) {
     return;
   }

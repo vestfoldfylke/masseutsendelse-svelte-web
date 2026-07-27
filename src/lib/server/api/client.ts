@@ -30,7 +30,6 @@ export const callApi = async <T>(event: RequestEvent, path: string, options: Api
   }
 
   const url: string = `${getMasseutsendelseApiBaseUrl()}/${path}`;
-  console.log("callApi --", options.method ?? "GET", "--", url);
   const response: Response = await event.fetch(url, {
     method: options.method ?? "GET",
     headers,
@@ -39,7 +38,6 @@ export const callApi = async <T>(event: RequestEvent, path: string, options: Api
 
   if (!response.ok) {
     const errorBody: ApiErrorBody | undefined = await response.json().catch(() => undefined);
-    console.error("callApi --", options.method ?? "GET", "--", url, "--", errorBody);
     throw new AppError(errorBody?.title ?? "Feil ved kall til API", errorBody?.message ?? `${path} svarte med status ${response.status}`);
   }
 

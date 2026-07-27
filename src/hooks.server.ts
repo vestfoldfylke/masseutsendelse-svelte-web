@@ -117,12 +117,10 @@ export const handle: Handle = async ({ event, resolve }) => {
   event.locals.user = createDevUser();
 
   if (event.request.headers.has(CLIENT_PRINCIPAL_HEADER)) {
-    console.warn(`Header already have dev '${CLIENT_PRINCIPAL_HEADER}' set`);
     return resolve(event);
   }
 
   event.request.headers.set(CLIENT_PRINCIPAL_HEADER, createDevClaims(event.locals.user));
-  console.log(`Header dev '${CLIENT_PRINCIPAL_HEADER}' is set`);
 
   return resolve(event);
 };

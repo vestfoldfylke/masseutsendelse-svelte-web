@@ -1,15 +1,6 @@
 import type { Template } from "$lib/templates/types";
+import type { PdfPreviewRequest, PdfPreviewResponse } from "$lib/types/pdf.types";
 import { clientApiFetch } from "./apiFetch";
-
-type PdfPreviewRequest = {
-  attachments?: unknown;
-  createdByDepartment?: string;
-  archivenumber?: string;
-  createdBy?: string;
-  template: Template;
-};
-
-export const fetchTemplates = (): Promise<Template[]> => clientApiFetch<Template[]>("/api/templates");
 
 export const saveTemplate = (template: Template): Promise<void> => {
   const path: string = template._id ? `/api/templates/${template._id}` : "/api/templates";
@@ -24,7 +15,7 @@ export const saveTemplate = (template: Template): Promise<void> => {
 };
 
 export const requestPdfPreview = async (req: PdfPreviewRequest): Promise<string> => {
-  const result: { base64: string } = await clientApiFetch<{ base64: string }>("/api/pdf-preview", {
+  const result: PdfPreviewResponse = await clientApiFetch<PdfPreviewResponse>("/api/pdf-preview", {
     method: "POST",
     headers: {
       "content-type": "application/json"

@@ -1,17 +1,5 @@
 <script lang="ts">
-  type ErrorLike = Error & {
-    statusCode?: number;
-    status?: number;
-    errors?: string[];
-    response?: {
-      data?: {
-        title?: string;
-        message?: string;
-        errors?: string | string[];
-        stack?: string;
-      };
-    };
-  };
+  import type { ErrorLike } from "$lib/errors/AppError";
 
   type Props = {
     error: ErrorLike;

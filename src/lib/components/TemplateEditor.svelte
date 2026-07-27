@@ -4,25 +4,12 @@
   import Sjablong from "@vtfk/sjablong";
   import { onMount } from "svelte";
   import { decodeBase64, encodeBase64 } from "$lib/base64";
+  import type { ErrorLike } from "$lib/errors/AppError";
   import { uiState } from "$lib/state/uiState.svelte";
   import type { Template } from "$lib/templates/types";
   import ErrorField from "./errors/ErrorField.svelte";
   import SchemaFields from "./SchemaFields.svelte";
   import InsertTemplateForm from "./templating/InsertTemplateForm.svelte";
-
-  type ErrorLike = Error & {
-    statusCode?: number;
-    status?: number;
-    errors?: string[];
-    response?: {
-      data?: {
-        title?: string;
-        message?: string;
-        errors?: string | string[];
-        stack?: string;
-      };
-    };
-  };
 
   type Props = {
     template?: Template;
