@@ -20,11 +20,7 @@
     statusReadable: string;
   };
 
-  type SortName = "project"
-    | "projectNumber"
-    | "date"
-    | "status"
-    | "createdBy";
+  type SortName = "project" | "projectNumber" | "date" | "status" | "createdBy";
 
   const STATUS_COLORS: Record<DispatchStatus | "", string> = {
     approved: "#D0C788",
@@ -59,7 +55,7 @@
       actionName: getEditActionName(dispatch),
       createdTimestampReadable: prettifyDateTime(dispatch.createdTimestamp),
       modifiedTimestampReadable: prettifyDateTime(dispatch.modifiedTimestamp),
-      statusReadable: STATUS_LABELS[dispatch.status ?? ""],
+      statusReadable: STATUS_LABELS[dispatch.status ?? ""]
     };
   };
 
@@ -67,21 +63,15 @@
     return dispatches.sort((a: DispatchFrontend, b: DispatchFrontend) => {
       switch (sortBy) {
         case "project":
-          return sortDirection === "ascending"
-            ? a.title.localeCompare(b.title)
-            : b.title.localeCompare(a.title);
+          return sortDirection === "ascending" ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title);
         case "projectNumber":
-          return sortDirection === "ascending"
-            ? a.projectnumber.localeCompare(b.projectnumber)
-            : b.projectnumber.localeCompare(a.projectnumber);
+          return sortDirection === "ascending" ? a.projectnumber.localeCompare(b.projectnumber) : b.projectnumber.localeCompare(a.projectnumber);
         case "date": {
           if (!a.createdTimestamp || !b.createdTimestamp) {
             return 0;
           }
 
-          const value: number = sortDirection === "ascending"
-            ? Date.parse(a.createdTimestamp) - Date.parse(b.createdTimestamp)
-            : Date.parse(b.createdTimestamp) - Date.parse(a.createdTimestamp);
+          const value: number = sortDirection === "ascending" ? Date.parse(a.createdTimestamp) - Date.parse(b.createdTimestamp) : Date.parse(b.createdTimestamp) - Date.parse(a.createdTimestamp);
 
           if (value < 0) {
             return -1;
@@ -94,23 +84,19 @@
           return 0;
         }
         case "status":
-          return sortDirection === "ascending"
-            ? a.statusReadable.localeCompare(b.statusReadable)
-            : b.statusReadable.localeCompare(a.statusReadable);
+          return sortDirection === "ascending" ? a.statusReadable.localeCompare(b.statusReadable) : b.statusReadable.localeCompare(a.statusReadable);
         case "createdBy": {
           if (!a.createdBy || !b.createdBy) {
             return 0;
           }
 
-          return sortDirection === "ascending"
-            ? a.createdBy.localeCompare(b.createdBy)
-            : b.createdBy.localeCompare(a.createdBy);
+          return sortDirection === "ascending" ? a.createdBy.localeCompare(b.createdBy) : b.createdBy.localeCompare(a.createdBy);
         }
         default:
           return 0;
       }
     });
-  }
+  };
 
   const filteredDispatches: DispatchFrontend[] = $derived.by(() => {
     if (!search) {
@@ -118,9 +104,11 @@
     }
 
     const term = search.toUpperCase();
-    return sortFilteredDispatches(data.dispatches
-      .map((dispatch: Dispatch) => getFrontendDispatch(dispatch))
-      .filter((dispatch: DispatchFrontend) => Object.values(dispatch).some((value) => value !== undefined && value !== null && String(value).toUpperCase().includes(term))));
+    return sortFilteredDispatches(
+      data.dispatches
+        .map((dispatch: Dispatch) => getFrontendDispatch(dispatch))
+        .filter((dispatch: DispatchFrontend) => Object.values(dispatch).some((value) => value !== undefined && value !== null && String(value).toUpperCase().includes(term)))
+    );
   });
 
   const editItem = async (item: DispatchFrontend): Promise<void> => {
@@ -141,7 +129,7 @@
     } catch (err) {
       uiState.globalError = err as never;
     }
-  }
+  };
 
   const previewPdf = async (item: Dispatch): Promise<void> => {
     try {
@@ -168,15 +156,13 @@
       return "Vis";
     }
 
-    return ["approved", "notapproved"].includes(dispatch.status)
-      ? "Rediger"
-      : "Vis";
-  }
+    return ["approved", "notapproved"].includes(dispatch.status) ? "Rediger" : "Vis";
+  };
 
   const handleSortBy = (sortName: SortName): void => {
     sortBy = sortName;
     sortDirection = sortDirection === "descending" ? "ascending" : "descending";
-  }
+  };
 </script>
 
 <div class="container">

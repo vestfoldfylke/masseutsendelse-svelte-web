@@ -17,9 +17,7 @@
     modifiedTimestampReadable: string;
   };
 
-  type SortName = "name"
-    | "description"
-    | "date";
+  type SortName = "name" | "description" | "date";
 
   let sortBy: string = $state("name");
   let sortDirection: SortDirection = $state("ascending");
@@ -36,7 +34,7 @@
       name: template.name,
       description: template.description,
       createdTimestampReadable: prettifyDateTime(template.createdTimestamp),
-      modifiedTimestampReadable: prettifyDateTime(template.modifiedTimestamp),
+      modifiedTimestampReadable: prettifyDateTime(template.modifiedTimestamp)
     };
   };
 
@@ -46,21 +44,15 @@
       .sort((a: TemplateFrontend, b: TemplateFrontend) => {
         switch (sortBy) {
           case "name":
-            return sortDirection === "ascending"
-              ? a.name.localeCompare(b.name)
-              : b.name.localeCompare(a.name);
+            return sortDirection === "ascending" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
           case "description":
-            return sortDirection === "ascending"
-              ? a.description.localeCompare(b.description)
-              : b.description.localeCompare(a.description);
+            return sortDirection === "ascending" ? a.description.localeCompare(b.description) : b.description.localeCompare(a.description);
           case "date": {
             if (!a.createdTimestamp || !b.createdTimestamp) {
               return 0;
             }
 
-            const value: number = sortDirection === "ascending"
-              ? Date.parse(a.createdTimestamp) - Date.parse(b.createdTimestamp)
-              : Date.parse(b.createdTimestamp) - Date.parse(a.createdTimestamp);
+            const value: number = sortDirection === "ascending" ? Date.parse(a.createdTimestamp) - Date.parse(b.createdTimestamp) : Date.parse(b.createdTimestamp) - Date.parse(a.createdTimestamp);
 
             if (value < 0) {
               return -1;
@@ -108,7 +100,7 @@
   const handleSortBy = (sortName: SortName): void => {
     sortBy = sortName;
     sortDirection = sortDirection === "descending" ? "ascending" : "descending";
-  }
+  };
 </script>
 
 <div class="container">

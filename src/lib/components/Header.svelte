@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { page } from "$app/state"
+  import { page } from "$app/state";
   import headerLogo from "$lib/assets/header_logo.svg";
   import { uiState } from "$lib/state/uiState.svelte";
 
@@ -8,10 +8,10 @@
   };
 
   type MenuItem = {
-    name: string
-    href: string
-    onClick?: () => void
-  }
+    name: string;
+    href: string;
+    onClick?: () => void;
+  };
 
   let { user }: Props = $props();
 
@@ -32,7 +32,7 @@
     { name: "Maler", href: "/maler" },
     { name: "Utsendelser", href: "/utsendelser" },
     { name: "Hjelp", href: "javascript:void(0)", onClick: () => (uiState.isGuideModalOpen = true) }
-  ]
+  ];
 </script>
 
 <div class="header">
