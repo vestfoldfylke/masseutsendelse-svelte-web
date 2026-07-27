@@ -1,16 +1,18 @@
 <script lang="ts">
   import Sjablong from "@vtfk/sjablong";
   import { decodeBase64 } from "$lib/base64";
-  import { createEmptyDispatch, type Dispatch, type DispatchStatus, type Owner } from "$lib/dispatch/types";
+  import { createEmptyDispatch } from "$lib/dispatch/dispatch";
   import { AppError, type ErrorLike } from "$lib/errors/AppError";
   import { deepMerge, pickKeys } from "$lib/objectUtils";
-  import { type ParsedPolygon, parsePolygonFile } from "$lib/polyparser/polyparser";
-  import type { EnrichedMatrikkelData } from "$lib/server/matrikkelEnrichment";
+  import { parsePolygonFile } from "$lib/polyparser/polyparser";
   import { uiState } from "$lib/state/uiState.svelte";
-  import type { Template } from "$lib/templates/types";
+  import type { Dispatch, DispatchStatus, Owner } from "$lib/types/dispatch.types";
   import type { MatrikkelEnhet } from "$lib/types/matrikkel.types";
+  import type { EnrichedMatrikkelData } from "$lib/types/matrikkelEnrichment.types";
   import type { PdfPreviewRequest } from "$lib/types/pdf.types";
-  import type { UploadedFileData } from "$lib/uploader/types";
+  import type { ParsedPolygon } from "$lib/types/polyparser.types";
+  import type { Template } from "$lib/types/template.types";
+  import type { UploadedFileData } from "$lib/types/upload.types";
   import DispatchFormPanel from "./dispatch/DispatchFormPanel.svelte";
   import DispatchMatrikkelPanel from "./dispatch/DispatchMatrikkelPanel.svelte";
   import DispatchUploadStep from "./dispatch/DispatchUploadStep.svelte";

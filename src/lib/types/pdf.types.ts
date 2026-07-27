@@ -1,5 +1,5 @@
-import type { Template } from "$lib/templates/types";
-import type { UploadedFileData } from "$lib/uploader/types";
+import type { Template } from "$lib/types/template.types";
+import type { UploadedFileData } from "$lib/types/upload.types";
 
 export type PdfPreviewRequest = {
   attachments?: UploadedFileData[];

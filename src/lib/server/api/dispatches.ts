@@ -1,6 +1,6 @@
 import type { RequestEvent } from "@sveltejs/kit";
-import type { Dispatch } from "$lib/dispatch/types";
 import { removeKeys } from "$lib/objectUtils";
+import type { Dispatch } from "$lib/types/dispatch.types";
 import { callApi } from "./client";
 
 const DISPATCH_WRITE_ONLY_KEYS: string[] = ["validatedArchivenumber", "createdTimestamp", "createdBy", "createdById", "modifiedTimestamp", "modifiedBy", "modifiedById"];

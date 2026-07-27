@@ -1,7 +1,8 @@
 import type { Handle } from "@sveltejs/kit";
 import { dev } from "$app/environment";
 import { env } from "$env/dynamic/private";
-import { type AuthenticatedUser, CLIENT_PRINCIPAL_HEADER, type ClientPrincipal, parseClientPrincipal } from "$lib/server/auth";
+import { CLIENT_PRINCIPAL_HEADER, parseClientPrincipal } from "$lib/server/auth";
+import type { AuthenticatedUser, ClientPrincipal } from "$lib/types/auth.types";
 
 /**
  * Local dev has no App Service in front, so there's never a real X-MS-CLIENT-PRINCIPAL header -

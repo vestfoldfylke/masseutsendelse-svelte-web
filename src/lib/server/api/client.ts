@@ -3,15 +3,11 @@ import { dev } from "$app/environment";
 import { AppError } from "$lib/errors/AppError";
 import { getAccessTokenValue } from "$lib/server/auth";
 import { getMasseutsendelseApiBaseUrl } from "$lib/server/config";
+import type { ApiErrorBody } from "$lib/types/api.types";
 
 type ApiRequestOptions = {
   method?: "GET" | "POST" | "PUT" | "DELETE";
   body?: unknown;
-};
-
-type ApiErrorBody = {
-  title?: string;
-  message?: string;
 };
 
 /**

@@ -1,9 +1,5 @@
 import { AppError } from "$lib/errors/AppError";
-
-type ApiErrorBody = {
-  title?: string;
-  message?: string;
-};
+import type { ApiErrorBody } from "$lib/types/api.types";
 
 export const clientApiFetch = async <T>(path: string, init?: RequestInit): Promise<T> => {
   const response: Response = await fetch(path, init);

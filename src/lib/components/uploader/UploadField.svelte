@@ -1,7 +1,7 @@
 <script lang="ts">
   import uploadIcon from "$lib/assets/icons/upload.svg";
   import uploadDisabledIcon from "$lib/assets/icons/upload-disabled.svg";
-  import type { UploadedFileData } from "$lib/uploader/types";
+  import type { UploadedFileData } from "$lib/types/upload.types";
   import FileListDisplay from "./FileList.svelte";
 
   const MAX_SINGLE_FILE_SIZE = 16_000_000;

@@ -1,8 +1,9 @@
-import type { MatrikkelUnit, Owner } from "$lib/dispatch/types";
 import { AppError } from "$lib/errors/AppError";
 import { removeKeys } from "$lib/objectUtils";
+import type { MatrikkelUnit, Owner } from "$lib/types/dispatch.types";
+import type { RawMatrikkelOwner } from "$lib/types/matrikkel.types";
 
-export type MatrikkelItem = Record<string, unknown> & {
+type MatrikkelItem = Record<string, unknown> & {
   _type?: string;
   type?: string;
   value?: unknown;
@@ -49,9 +50,6 @@ export const getItemValue = (item: MatrikkelItem | undefined): unknown => {
 
   return item;
 };
-
-/** The Matrikkel API's raw owner shape, before conversion to the canonical (owner-centric) `Owner`. */
-export type RawMatrikkelOwner = Record<string, unknown> & { id: { value: string }; _type?: string };
 
 export const getMatrikkelEnheterOwnerCentric = (matrikkelUnits: MatrikkelUnit[], matrikkelOwners: RawMatrikkelOwner[]): Owner[] => {
   if (!matrikkelUnits) {

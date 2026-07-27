@@ -1,6 +1,6 @@
-import type { Dispatch } from "$lib/dispatch/types";
-import type { EnrichedMatrikkelData } from "$lib/server/matrikkelEnrichment";
+import type { Dispatch } from "$lib/types/dispatch.types";
 import type { MatrikkelEnhet } from "$lib/types/matrikkel.types";
+import type { EnrichedMatrikkelData } from "$lib/types/matrikkelEnrichment.types";
 import { clientApiFetch } from "./apiFetch";
 
 type AttachmentDownloadResponse = {

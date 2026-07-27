@@ -1,9 +1,10 @@
 import type { RequestEvent } from "@sveltejs/kit";
-import type { Dispatch, MatrikkelUnit, Owner, Ownership } from "$lib/dispatch/types";
 import { AppError } from "$lib/errors/AppError";
-import { getMatrikkelEnheterOwnerCentric, type RawMatrikkelOwner } from "$lib/matrikkel/matrikkelUtils";
+import { getMatrikkelEnheterOwnerCentric } from "$lib/matrikkel/matrikkelUtils";
 import { getExcludedOwnerIds } from "$lib/server/config";
-import type { MatrikkelEnhet } from "$lib/types/matrikkel.types";
+import type { Dispatch, MatrikkelUnit, Owner, Ownership } from "$lib/types/dispatch.types";
+import type { MatrikkelEnhet, RawMatrikkelOwner } from "$lib/types/matrikkel.types";
+import type { EnrichedMatrikkelData } from "$lib/types/matrikkelEnrichment.types";
 import { getBrregEntity } from "./api/brreg";
 import { getMatrikkelenheterFromPolygon, getMatrikkelStoreItems } from "./api/matrikkel";
 
@@ -27,13 +28,6 @@ const chunk = <T>(items: T[], size: number): T[][] => {
     chunks.push(items.slice(i, i + size));
   }
   return chunks;
-};
-
-export type EnrichedMatrikkelData = {
-  owners: Owner[];
-  excludedOwners: Owner[];
-  matrikkelUnitsWithoutOwners: MatrikkelUnit[];
-  stats: Dispatch["stats"];
 };
 
 /**

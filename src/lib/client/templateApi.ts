@@ -1,5 +1,5 @@
-import type { Template } from "$lib/templates/types";
 import type { PdfPreviewRequest, PdfPreviewResponse } from "$lib/types/pdf.types";
+import type { Template } from "$lib/types/template.types";
 import { clientApiFetch } from "./apiFetch";
 
 export const saveTemplate = (template: Template): Promise<void> => {

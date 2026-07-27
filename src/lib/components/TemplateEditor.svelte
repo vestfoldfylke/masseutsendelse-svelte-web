@@ -6,7 +6,7 @@
   import { decodeBase64, encodeBase64 } from "$lib/base64";
   import type { ErrorLike } from "$lib/errors/AppError";
   import { uiState } from "$lib/state/uiState.svelte";
-  import type { Template } from "$lib/templates/types";
+  import type { Template } from "$lib/types/template.types";
   import ErrorField from "./errors/ErrorField.svelte";
   import SchemaFields from "./SchemaFields.svelte";
   import InsertTemplateForm from "./templating/InsertTemplateForm.svelte";

@@ -1,10 +1,6 @@
 import toGeoJSON from "@mapbox/togeojson";
+import type { PolygonShape } from "$lib/types/polyparser.types";
 import { AppError } from "../../errors/AppError";
-
-export type PolygonShape = {
-  metadata: Record<string, unknown> | null;
-  vertices: number[][];
-};
 
 /**
  * Runs client-side only (relies on the browser's global DOMParser) - only call this from

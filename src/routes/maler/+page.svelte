@@ -4,8 +4,8 @@
   import TemplateEditor from "$lib/components/TemplateEditor.svelte";
   import { prettifyDateTime } from "$lib/helpers";
   import { uiState } from "$lib/state/uiState.svelte";
-  import type { Template } from "$lib/templates/types";
   import type { SortDirection } from "$lib/types/table.types";
+  import type { Template } from "$lib/types/template.types";
   import type { PageProps } from "./$types";
 
   let { data }: PageProps = $props();

@@ -4,9 +4,9 @@
   import { requestPdfPreview } from "$lib/client/templateApi";
   import DispatchEditor from "$lib/components/DispatchEditor.svelte";
   import DispatchMap from "$lib/components/Map.svelte";
-  import type { Dispatch, DispatchStatus } from "$lib/dispatch/types";
   import { prettifyDateTime } from "$lib/helpers";
   import { uiState } from "$lib/state/uiState.svelte";
+  import type { Dispatch, DispatchStatus } from "$lib/types/dispatch.types";
   import type { SortDirection } from "$lib/types/table.types";
   import type { PageProps } from "./$types";
 

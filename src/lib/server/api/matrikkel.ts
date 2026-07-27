@@ -1,7 +1,7 @@
 import type { RequestEvent } from "@sveltejs/kit";
 import { AppError } from "$lib/errors/AppError";
-import type { Coordinate } from "$lib/polyparser/polyparser";
 import { getMatrikkelProxyClientId } from "$lib/server/config";
+import type { Coordinate } from "$lib/types/polyparser.types";
 import { callApi } from "./client";
 
 export type MatrikkelContext = {

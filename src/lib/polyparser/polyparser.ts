@@ -1,6 +1,7 @@
 import turfArea from "@turf/area";
 import { polygon as turfPolygon } from "@turf/helpers";
 import proj4 from "proj4";
+import type { Coordinate, Extremes, ParsedPolygon, ParsedPolygonFile } from "$lib/types/polyparser.types";
 import { AppError } from "../errors/AppError";
 import { parse as parseDxf } from "./parsers/dxf";
 import { parse as parseKml } from "./parsers/kml";
@@ -11,41 +12,10 @@ proj4.defs([
   ["25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs"]
 ]);
 
-export type Coordinate = [number, number];
-
-export type Extremes = {
-  north: Coordinate;
-  west: Coordinate;
-  east: Coordinate;
-  south: Coordinate;
-};
-
-export type ParsedPolygon = {
-  EPSG: string;
-  metadata: Record<string, unknown> | null;
-  extremes: Extremes;
-  center: Coordinate;
-  area: number;
-  vertices: Coordinate[];
-};
-
-export type ParsedPolygonFile = {
-  EPSG: string;
-  extremes: Extremes;
-  center: Coordinate;
-  area: number;
-  polygons: ParsedPolygon[];
-};
-
-export type UploadedFile = {
+type UploadedFile = {
   name: string;
   size: number;
   data: string;
-};
-
-export type ParseOptions = {
-  fromProj4Projection?: string;
-  toProj4Projection?: string;
 };
 
 const copy = <T>(value: T): T => JSON.parse(JSON.stringify(value));

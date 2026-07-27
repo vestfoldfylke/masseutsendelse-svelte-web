@@ -1,7 +1,8 @@
 import { json } from "@sveltejs/kit";
 import { AppError } from "$lib/errors/AppError";
-import { type EnrichedMatrikkelData, enrichDispatchWithMatrikkelData } from "$lib/server/matrikkelEnrichment";
+import { enrichDispatchWithMatrikkelData } from "$lib/server/matrikkelEnrichment";
 import type { MatrikkelEnhet } from "$lib/types/matrikkel.types";
+import type { EnrichedMatrikkelData } from "$lib/types/matrikkelEnrichment.types";
 import type { RequestHandler } from "./$types";
 
 type MatrikkelEnrichmentRequestBody = {

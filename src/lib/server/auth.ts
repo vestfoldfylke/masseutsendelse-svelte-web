@@ -1,4 +1,5 @@
 import type { RequestEvent } from "@sveltejs/kit";
+import type { AuthenticatedUser, ClientPrincipal } from "$lib/types/auth.types";
 
 export const CLIENT_PRINCIPAL_HEADER = "x-ms-client-principal";
 const ACCESS_TOKEN_HEADER = "x-ms-token-aad-access-token";
@@ -8,26 +9,6 @@ const ID_CLAIM_TYPES = ["http://schemas.microsoft.com/identity/claims/objectiden
 const NAME_CLAIM_TYPES = ["name", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
 const USERNAME_CLAIM_TYPES = ["preferred_username", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", "upn", "email"];
 const DEPARTMENT_CLAIM_TYPES = ["department"];
-
-export type ClientPrincipalClaim = {
-  typ: string;
-  val: string;
-};
-
-export type ClientPrincipal = {
-  auth_typ: string;
-  claims: ClientPrincipalClaim[];
-  name_typ: string;
-  role_typ: string;
-};
-
-export type AuthenticatedUser = {
-  id: string;
-  name: string;
-  username: string;
-  department: string | null;
-  claims: Record<string, string>;
-};
 
 const firstClaim = (claims: Record<string, string>, claimTypes: string[]): string | undefined => {
   for (const claimType of claimTypes) {

@@ -1,20 +1,6 @@
 <script lang="ts">
   import { getPath } from "$lib/objectUtils";
-
-  type Share = { teller?: number; nevner?: number };
-
-  type MatrikkelOwnership = Record<string, unknown> & {
-    datoFra?: string;
-    _type?: string;
-    andel?: Share;
-  };
-
-  type MatrikkelUnit = Record<string, unknown> & {
-    bruksnavn?: string;
-    _type?: string;
-    historiskOppgittAreal?: number;
-    eierforhold?: MatrikkelOwnership[];
-  };
+  import type { Andel, MatrikkelUnit } from "$lib/types/dispatch.types";
 
   type Props = {
     items: MatrikkelUnit[];
@@ -41,7 +27,7 @@
     return type.toLowerCase().includes("juridisk") ? "🏢 Juridisk" : "🏠 Privat";
   };
 
-  const formatShare = (andel: Share | undefined): string => {
+  const formatShare = (andel: Andel | undefined): string => {
     if (!andel?.teller || !andel?.nevner) {
       return "";
     }

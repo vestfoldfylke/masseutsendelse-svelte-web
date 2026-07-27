@@ -1,6 +1,6 @@
-import type { ParsedPolygonFile } from "$lib/polyparser/polyparser";
-import type { Template } from "$lib/templates/types";
-import type { UploadedFileData } from "$lib/uploader/types";
+import type { ParsedPolygonFile } from "$lib/types/polyparser.types";
+import type { Template } from "$lib/types/template.types";
+import type { UploadedFileData } from "$lib/types/upload.types";
 
 export type Andel = { teller?: number; nevner?: number };
 
@@ -79,15 +79,3 @@ export type Dispatch = {
   stats: DispatchStats;
   polygons?: ParsedPolygonFile;
 };
-
-export const createEmptyDispatch = (): Dispatch => ({
-  title: "",
-  projectnumber: "",
-  archivenumber: "",
-  template: {},
-  attachments: [],
-  owners: [],
-  excludedOwners: [],
-  matrikkelUnitsWithoutOwners: [],
-  stats: { affectedCount: null, area: null, totalOwners: null, privateOwners: null, businessOwners: null, units: [] }
-});

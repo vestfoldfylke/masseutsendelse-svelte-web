@@ -9,7 +9,8 @@
   import northBoundIcon from "$lib/assets/icons/north-bound.svg";
   import southBoundIcon from "$lib/assets/icons/south-bound.svg";
   import westBoundIcon from "$lib/assets/icons/west-bound.svg";
-  import { type Coordinate, type Extremes, type ParsedPolygon, type ParsedPolygonFile, swapXY, transformCoordinates } from "$lib/polyparser/polyparser";
+  import { swapXY, transformCoordinates } from "$lib/polyparser/polyparser";
+  import type { Coordinate, Extremes, ParsedPolygon, ParsedPolygonFile } from "$lib/types/polyparser.types";
   import Loading from "./Loading.svelte";
 
   type Props = {

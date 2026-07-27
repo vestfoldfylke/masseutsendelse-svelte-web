@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { UploadedFileData } from "$lib/uploader/types";
+  import type { UploadedFileData } from "$lib/types/upload.types";
   import UploadField from "../uploader/UploadField.svelte";
 
   type Props = {

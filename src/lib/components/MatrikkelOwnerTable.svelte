@@ -1,28 +1,5 @@
 <script lang="ts">
-  type Share = { teller?: number; nevner?: number };
-
-  type Ownership = Record<string, unknown> & {
-    unit?: Record<string, unknown> & {
-      bruksnavn?: string;
-      matrikkelnummer?: { kommuneId?: string; gardsnummer?: string; bruksnummer?: string; festenummer?: string };
-    };
-    datoFra?: string;
-    _type?: string;
-    andel?: Share;
-  };
-
-  type Owner = Record<string, unknown> & {
-    id: string;
-    navn?: string;
-    _type?: string;
-    nummer?: string;
-    ownerships: Ownership[];
-    exclusionReason?: string;
-    isHardExcluded?: boolean;
-    postadresse?: { adresselinje?: string; adresselinje1?: string; adresselinje2?: string; adresselinje3?: string };
-    dsf?: { ADR?: string; POSTN?: string; POSTS?: string };
-    brreg?: { postadresse?: { adresse?: string; postnummer?: string; poststed?: string } };
-  };
+  import type { Andel, Owner } from "$lib/types/dispatch.types";
 
   type OwnerTableType = "included" | "excluded";
 
@@ -56,7 +33,7 @@
     return value.toLowerCase().includes("juridisk") ? "🏢 Juridisk" : "🏠 Privat";
   };
 
-  const formatShare = (andel: Share | undefined): string => {
+  const formatShare = (andel: Andel | undefined): string => {
     if (!andel?.teller || !andel?.nevner) {
       return "";
     }

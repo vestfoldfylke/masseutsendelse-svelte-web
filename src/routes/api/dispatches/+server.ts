@@ -1,7 +1,7 @@
 import { json } from "@sveltejs/kit";
-import type { Dispatch } from "$lib/dispatch/types";
 import { AppError } from "$lib/errors/AppError";
 import { createDispatch, getDispatches } from "$lib/server/api/dispatches";
+import type { Dispatch } from "$lib/types/dispatch.types";
 import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async (event) => {

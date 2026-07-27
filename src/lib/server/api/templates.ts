@@ -1,6 +1,6 @@
 import type { RequestEvent } from "@sveltejs/kit";
 import { removeKeys } from "$lib/objectUtils";
-import type { Template } from "$lib/templates/types";
+import type { Template } from "$lib/types/template.types";
 import { callApi } from "./client";
 
 const TEMPLATE_CREATE_ONLY_KEYS: string[] = ["createdTimestamp", "createdBy", "createdById", "createdByDepartment", "modifiedTimestamp", "modifiedBy", "modifiedById", "modifiedByDepartment"];

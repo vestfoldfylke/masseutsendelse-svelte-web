@@ -1,6 +1,6 @@
 import exportFromJSON from "export-from-json";
-import type { MatrikkelUnit, Owner } from "$lib/dispatch/types";
 import { getFilenameDateTime } from "$lib/helpers";
+import type { MatrikkelUnit, Owner } from "$lib/types/dispatch.types";
 
 type ExportRow = Record<string, string | number>;
 

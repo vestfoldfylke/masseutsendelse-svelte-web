@@ -1,10 +1,6 @@
 import DxfParser from "dxf-parser";
+import type { PolygonShape } from "$lib/types/polyparser.types";
 import { AppError } from "../../errors/AppError";
-
-export type PolygonShape = {
-  metadata: Record<string, unknown> | null;
-  vertices: number[][];
-};
 
 export const parse = (text: string): PolygonShape[] => {
   try {

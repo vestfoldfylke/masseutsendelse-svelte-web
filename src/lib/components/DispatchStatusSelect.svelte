@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { DispatchStatus } from "$lib/dispatch/types";
+  import type { DispatchStatus } from "$lib/types/dispatch.types";
 
   type StatusItem = {
     text: string;
