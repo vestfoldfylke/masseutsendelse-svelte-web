@@ -81,7 +81,7 @@
       {/if}
 
       {#if dispatch.status === "completed"}
-        <div class="full-width">
+        <div>
           <h2>
             Utsendelsen er ferdigstilt. Eiere og mottakere er fjernet av personvernhensyn. <br />
             For å se disse kan du trykke på "Åpne Arkiv" og navigere til "Kontakter"
