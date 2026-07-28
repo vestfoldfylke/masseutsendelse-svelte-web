@@ -67,8 +67,6 @@
 
   let activeTemplate: Template = $state(initialTemplate);
 
-  const mode = $derived(activeTemplate._id ? "edit" : "new");
-
   const getDocumentTemplateSchema = (): object | undefined => {
     const found = DOCUMENT_TEMPLATES.find((candidate) => candidate.value === activeTemplate.documentDefinitionId);
     return found?.schema;
@@ -218,6 +216,7 @@
         language: "no-NB",
         usageStatistics: false,
         frontMatter: true,
+        previewStyle: "vertical",
         toolbarItems: [["heading", "bold", "italic", "strike"], ["hr"], ["ul", "ol", "indent", "outdent"]]
       };
 
