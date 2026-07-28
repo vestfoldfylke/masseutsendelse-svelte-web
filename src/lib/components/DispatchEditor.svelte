@@ -1,5 +1,6 @@
 <script lang="ts">
   import Sjablong from "@vtfk/sjablong";
+  import { untrack } from "svelte";
   import { decodeBase64 } from "$lib/base64";
   import { createEmptyDispatch } from "$lib/dispatch/dispatch";
   import { AppError, type ErrorLike } from "$lib/errors/AppError";
@@ -263,7 +264,7 @@
   // Matches an already-set template (editing an existing dispatch) against the now-available
   // templates list once, on mount - mirrors the original's loadTemplates() "attempt to match" step.
   if (dispatch.template?.template) {
-    const matchingTemplate = templates.find((candidate: Template) => candidate._id === dispatch.template._id);
+    const matchingTemplate = untrack(() => templates).find((candidate: Template) => candidate._id === dispatch.template._id);
     onTemplateChanged(matchingTemplate ?? dispatch.template);
   }
 

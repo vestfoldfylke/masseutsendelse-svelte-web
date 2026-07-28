@@ -2,7 +2,7 @@
   import "@toast-ui/editor/dist/toastui-editor.css";
   import type { EditorOptions, MdNode, Editor as ToastEditor } from "@toast-ui/editor";
   import Sjablong from "@vtfk/sjablong";
-  import { onMount } from "svelte";
+  import { onMount, untrack } from "svelte";
   import { decodeBase64, encodeBase64 } from "$lib/base64";
   import type { ErrorLike } from "$lib/errors/AppError";
   import { uiState } from "$lib/state/uiState.svelte";
@@ -55,7 +55,7 @@
   // Intentionally a one-time snapshot of the `template` prop (matches the original's Vue `created()`
   // hook) - the user edits this local copy until they explicitly save, later prop changes shouldn't
   // clobber in-progress edits.
-  const initialTemplate: Template = template && typeof template === "object" && Object.keys(template).length > 0 ? JSON.parse(JSON.stringify(template)) : {};
+  const initialTemplate: Template = untrack(() => (template && typeof template === "object" && Object.keys(template).length > 0 ? JSON.parse(JSON.stringify(template)) : {}));
   if (initialTemplate.template && typeof initialTemplate.template === "string") {
     try {
       initialTemplate.template = decodeBase64(initialTemplate.template);
