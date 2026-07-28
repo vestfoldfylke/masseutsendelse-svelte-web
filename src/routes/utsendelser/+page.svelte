@@ -23,7 +23,7 @@
     statusReadable: string;
   };
 
-  type SortName = "project" | "projectNumber" | "date" | "status" | "createdBy";
+  type SortName = "project" | "projectNumber" | "date" | "status" | "createdBy" | "approvedBy";
 
   const STATUS_COLORS: Record<DispatchStatus | "", string> = {
     approved: "#D0C788",
@@ -97,6 +97,13 @@
           }
 
           return sortDirection === "ascending" ? a.createdBy.localeCompare(b.createdBy) : b.createdBy.localeCompare(a.createdBy);
+        }
+        case "approvedBy": {
+          if (!a.approvedBy || !b.approvedBy) {
+            return 0;
+          }
+
+          return sortDirection === "ascending" ? a.approvedBy.localeCompare(b.approvedBy) : b.approvedBy.localeCompare(a.approvedBy);
         }
         default:
           return 0;
@@ -196,6 +203,9 @@
         <th aria-sort={sortBy === "createdBy" ? sortDirection : "none"}>
           <button type="button" onclick={() => handleSortBy("createdBy")}>Saksbehandler</button>
         </th>
+        <th aria-sort={sortBy === "approvedBy" ? sortDirection : "none"}>
+          <button type="button" onclick={() => handleSortBy("approvedBy")}>Godkjent av</button>
+        </th>
         <th>Handlinger</th>
       </tr>
     </thead>
@@ -242,6 +252,7 @@
             </span>
           </td>
           <td>{item.createdBy}</td>
+          <td>{item.approvedBy}</td>
           <td class="actions">
             <button type="button" class="ds-button" data-variant="tertiary" data-icon onclick={() => editItem(item)} aria-label={item.actionName} data-tooltip={item.actionName}>✏️</button>
             <button type="button" class="ds-button" data-variant="tertiary" data-icon disabled={!item.template?._id} onclick={() => previewPdf(item)} aria-label="Forhåndsvisning" data-tooltip="Forhåndsvisning">🔍</button>
