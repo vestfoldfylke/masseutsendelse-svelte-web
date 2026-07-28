@@ -17,9 +17,9 @@
     modifiedTimestampReadable: string;
   };
 
-  type SortName = "name" | "description" | "date";
+  type SortName = "name" | "description" | "createdDate" | "modifiedDate";
 
-  let sortBy: string = $state("name");
+  let sortBy: string = $state("createdDate");
   let sortDirection: SortDirection = $state("ascending");
   let isShowEditor = $state(false);
   let activeTemplate: Template | undefined = $state(undefined);
@@ -47,12 +47,29 @@
             return sortDirection === "ascending" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
           case "description":
             return sortDirection === "ascending" ? a.description.localeCompare(b.description) : b.description.localeCompare(a.description);
-          case "date": {
+          case "createdDate": {
             if (!a.createdTimestamp || !b.createdTimestamp) {
               return 0;
             }
 
             const value: number = sortDirection === "ascending" ? Date.parse(a.createdTimestamp) - Date.parse(b.createdTimestamp) : Date.parse(b.createdTimestamp) - Date.parse(a.createdTimestamp);
+
+            if (value < 0) {
+              return -1;
+            }
+
+            if (value > 0) {
+              return 1;
+            }
+
+            return 0;
+          }
+          case "modifiedDate": {
+            if (!a.modifiedTimestamp || !b.modifiedTimestamp) {
+              return 0;
+            }
+
+            const value: number = sortDirection === "ascending" ? Date.parse(a.modifiedTimestamp) - Date.parse(b.modifiedTimestamp) : Date.parse(b.modifiedTimestamp) - Date.parse(a.modifiedTimestamp);
 
             if (value < 0) {
               return -1;
@@ -118,9 +135,13 @@
         <th aria-sort={sortBy === "description" ? sortDirection : "none"}>
           <button type="button" onclick={() => handleSortBy("description")}>Beskrivelse</button>
         </th>
-        <th aria-sort={sortBy === "date" ? sortDirection : "none"}>
-          <button type="button" onclick={() => handleSortBy("date")}>Dato</button>
+        <th aria-sort={sortBy === "createdDate" ? sortDirection : "none"}>
+          <button type="button" onclick={() => handleSortBy("createdDate")}>Opprettet</button>
         </th>
+        <th aria-sort={sortBy === "modifiedDate" ? sortDirection : "none"}>
+          <button type="button" onclick={() => handleSortBy("modifiedDate")}>Endret</button>
+        </th>
+        <th>Versjon</th>
         <th>Handlinger</th>
       </tr>
     </thead>
@@ -131,17 +152,21 @@
           <td>{template.description}</td>
           <td>
             <span class="ds-tag" data-color="neutral" data-size="sm">
-              <button data-popover="inline" popoverTarget="template-{template._id}_date">{template.createdTimestampReadable}</button>
+              <button data-popover="inline" popoverTarget="template-{template._id}_createdDate">{template.createdTimestampReadable}</button>
             </span>
-            <div id="template-{template._id}_date" class="ds-popover" popover="auto" data-placement="top">
-              <b>Opprettet</b><br />
-              {template.createdTimestampReadable}<br />
-              {template.createdBy}<br /><br />
-              <b>Endret</b><br />
-              {template.modifiedTimestampReadable}<br />
+            <div id="template-{template._id}_createdDate" class="ds-popover" popover="auto" data-placement="top">
+              {template.createdBy}
+            </div>
+          </td>
+          <td>
+            <span class="ds-tag" data-color="neutral" data-size="sm">
+              <button data-popover="inline" popoverTarget="template-{template._id}_modifiedDate">{template.modifiedTimestampReadable}</button>
+            </span>
+            <div id="template-{template._id}_modifiedDate" class="ds-popover" popover="auto" data-placement="top">
               {template.modifiedBy}
             </div>
           </td>
+          <td>{template.version}</td>
           <td class="actions">
             <button type="button" class="ds-button" data-variant="tertiary" data-icon onclick={() => openTemplateEditor(template)} aria-label="Rediger" title="Rediger">✏️</button>
             <button type="button" class="ds-button" data-variant="tertiary" data-icon onclick={() => previewTemplate(template)} aria-label="Forhåndsvisning" title="Forhåndsvisning">🔍</button>
