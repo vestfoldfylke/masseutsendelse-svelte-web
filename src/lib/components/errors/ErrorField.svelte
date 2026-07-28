@@ -13,7 +13,7 @@
   let { error, defaultTitle = "En feil har oppstått", showResetButton = true, showOkButton = false, onReset, onOk }: Props = $props();
 
   const statusCode = $derived(error.statusCode ?? error.status ?? "");
-  const title = $derived(error.response?.data?.title ?? "");
+  const title = $derived(error.response?.data?.title ?? error.title ?? "");
   const message = $derived(error.response?.data?.message ?? error.message ?? "");
   const errorList = $derived.by(() => {
     const responseErrors = error.response?.data?.errors;

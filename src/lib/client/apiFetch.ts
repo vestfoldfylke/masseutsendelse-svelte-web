@@ -6,7 +6,10 @@ export const clientApiFetch = async <T>(path: string, init?: RequestInit): Promi
 
   if (!response.ok) {
     const errorBody: ApiErrorBody | undefined = await response.json().catch(() => undefined);
-    throw new AppError(errorBody?.title ?? "Feil ved kall til clientApiFetch", errorBody?.message ?? `${path} svarte med status ${response.status}`);
+    throw new AppError(
+      errorBody?.error?.title ?? errorBody?.title ?? "Feil ved kall til clientApiFetch",
+      errorBody?.error?.message ?? errorBody?.message ?? `${path} svarte med status ${response.status}`
+    );
   }
 
   if (response.status === 204) {

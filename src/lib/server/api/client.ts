@@ -34,7 +34,7 @@ export const callApi = async <T>(event: RequestEvent, path: string, options: Api
 
   if (!response.ok) {
     const errorBody: ApiErrorBody | undefined = await response.json().catch(() => undefined);
-    throw new AppError(errorBody?.title ?? "Feil ved kall til API", errorBody?.message ?? `${path} svarte med status ${response.status}`);
+    throw new AppError(errorBody?.error?.title ?? errorBody?.title ?? "Feil ved kall til API", errorBody?.error?.message ?? errorBody?.message ?? `${path} svarte med status ${response.status}`);
   }
 
   if (response.status === 204) {

@@ -2,6 +2,7 @@ export type ErrorLike = Error & {
   statusCode?: number;
   status?: number;
   errors?: string[];
+  title?: string;
   response?: {
     data?: {
       title?: string;

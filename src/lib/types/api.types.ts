@@ -1,4 +1,11 @@
 export type ApiErrorBody = {
-  title?: string;
+  error?: {
+    statusCode?: number;
+    statusName?: string;
+    message?: string;
+    title?: string;
+  };
   message?: string;
+  title?: string;
+  documentation?: unknown;
 };
