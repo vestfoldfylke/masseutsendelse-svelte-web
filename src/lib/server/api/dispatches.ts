@@ -14,7 +14,14 @@ const DISPATCH_EDIT_ONLY_KEYS: string[] = [
   "modifiedTimestamp",
   "modifiedBy",
   "modifiedById",
-  "modifiedByDepartment"
+  "modifiedByDepartment",
+  "actionName",
+  "createdTimestampReadable",
+  "modifiedTimestampReadable",
+  "approvedTimestampReadable",
+  "inProgressTimestampReadable",
+  "completedTimestampReadable",
+  "statusReadable"
 ];
 
 export const getDispatches = (event: RequestEvent): Promise<Dispatch[]> => callApi<Dispatch[]>(event, "dispatches");

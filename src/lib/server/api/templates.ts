@@ -5,7 +5,16 @@ import { callApi } from "./client";
 
 const TEMPLATE_CREATE_ONLY_KEYS: string[] = ["createdTimestamp", "createdBy", "createdById", "createdByDepartment", "modifiedTimestamp", "modifiedBy", "modifiedById", "modifiedByDepartment"];
 
-const TEMPLATE_UPDATE_ONLY_KEYS: string[] = ["createdTimestamp", "createdBy", "createdById", "modifiedTimestamp", "modifiedBy", "modifiedById"];
+const TEMPLATE_UPDATE_ONLY_KEYS: string[] = [
+  "createdTimestamp",
+  "createdBy",
+  "createdById",
+  "modifiedTimestamp",
+  "modifiedBy",
+  "modifiedById",
+  "createdTimestampReadable",
+  "modifiedTimestampReadable"
+];
 
 export const getTemplates = (event: RequestEvent): Promise<Template[]> => callApi<Template[]>(event, "templates");
 
