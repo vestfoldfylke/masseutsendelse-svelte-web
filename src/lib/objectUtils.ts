@@ -4,7 +4,7 @@ const isPlainObject = (value: unknown): value is PlainObject => typeof value ===
 
 const toPathSegments = (path: string): string[] =>
   path
-    .replace(/\[(\d+)\]/g, ".$1")
+    .replace(/\[(\d+)]/g, ".$1")
     .split(".")
     .filter((segment) => segment.length > 0);
 

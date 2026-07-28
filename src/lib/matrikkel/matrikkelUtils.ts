@@ -11,7 +11,7 @@ type MatrikkelItem = Record<string, unknown> & {
 };
 
 /**
- * Attempts to get the type of a provided object returned from the Matrikkel API, if it is not flattened.
+ * Attempts to get the type of provided object returned from the Matrikkel API, if it is not flattened.
  */
 export const getItemType = (item: MatrikkelItem | undefined): string => {
   if (!item) {
