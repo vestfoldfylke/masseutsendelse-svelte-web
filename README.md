@@ -1,6 +1,6 @@
 # masseutsendelse-svelte-web
 
-Svelte 5 / SvelteKit rewrite of `vue-masseutsendelse-web` (Vue 2 + Vuetify + Vuex). A Blazor port was evaluated and rejected — the old app leans on several proprietary/JS-only libraries (`@vtfk/components` via a React-in-Vue bridge, `@vtfk/sjablong`, TOAST UI, Leaflet, custom DXF/KML parsing) that have no .NET equivalent, so a Blazor port would mostly be JS-interop wrappers anyway. Rewriting in Svelte 5 keeps the whole JS ecosystem intact and only requires porting the Vue-specific component/template layer.
+Svelte 5 / SvelteKit rewrite of `vue-masseutsendelse-web` (Vue 2 + Vuetify + Vuex). Rewriting in Svelte 5 keeps the whole JS ecosystem intact and only requires porting the Vue-specific component/template layer.
 
 ## Architecture decisions
 
@@ -53,7 +53,7 @@ All of these swap `@vtfk/components` (React) for Designsystemet (`ds-*` custom e
 - [x] **6. Port Loading and LoadingModal components**
   Ported to `src/lib/components/{Loading,modals/LoadingModal}.svelte`. Designsystemet's spinner is CSS-only (no custom element), so `Loading.svelte` hand-builds the exact SVG markup from Designsystemet's own React source (`viewBox="0 0 50 50"`, two `<circle>`s, `role="img"`). `LoadingModal` uses native `<dialog>.showModal()` and intercepts the `cancel` event to replicate Vuetify's `persistent` (non-dismissable) behavior.
 
-- [ ] **7. Port Header + top nav to Designsystemet**
+- [x] **7. Port Header + top nav to Designsystemet**
   Reference: `vue-masseutsendelse-web/src/components/Header.vue` (83 lines). Uses `InitialsBadge`, `IconDropdownNav`, `IconDropdownNavItem` from `@vtfk/components` — replace with Designsystemet's Avatar + a menu/dropdown pattern. Nav items: Hjelp (opens guide modal), Utsendelser, Maler, Logg ut. **Logg ut must point at `/.auth/logout`** (Easy Auth's endpoint), not the old MSAL logout flow — this is a behavior change, not just a styling port.
 
 - [x] **8. Port low-effort small components**
