@@ -109,7 +109,7 @@
         {#if type === "excluded"}
           <td>
             {#if !owner.isHardExcluded}
-              <input class="ds-input" value={owner.exclusionReason ?? ""} oninput={(event) => onExclusionReasonChange?.(owner, event.currentTarget.value)} />
+              <input class="ds-input" value={owner.exclusionReason ?? ""} disabled={disableInputs} oninput={(event) => onExclusionReasonChange?.(owner, event.currentTarget.value)} />
             {:else}
               {owner.exclusionReason}
             {/if}
