@@ -61,7 +61,7 @@ export const enrichDispatchWithMatrikkelData = async (event: RequestEvent, polyg
     throw new AppError("Feil koordinatsystem", "Fant ingen koordinatsystemKodeId for polygonene");
   }
 
-  const batches = chunk(matrikkelenhetIds, BATCH_SIZE);
+  const batches: string[][] = chunk(matrikkelenhetIds, BATCH_SIZE);
 
   const retrievedOwnerIds: string[] = [];
   const retrievedOwners: RawMatrikkelOwner[] = [];
