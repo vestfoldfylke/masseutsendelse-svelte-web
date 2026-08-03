@@ -1,9 +1,10 @@
 import type { RequestEvent } from "@sveltejs/kit";
+import { dev } from "$app/environment";
 import type { AuthenticatedUser, ClientPrincipal } from "$lib/types/auth.types";
 
 export const CLIENT_PRINCIPAL_HEADER = "x-ms-client-principal";
 const ACCESS_TOKEN_HEADER = "x-ms-token-aad-access-token";
-/*const TOKEN_EXPIRY_BUFFER_SECONDS = 60;*/
+const TOKEN_EXPIRY_BUFFER_SECONDS = 60;
 
 const ID_CLAIM_TYPES = ["http://schemas.microsoft.com/identity/claims/objectidentifier", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", "oid"];
 const NAME_CLAIM_TYPES = ["name", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
@@ -64,7 +65,7 @@ export const parseClientPrincipal = (headers: Headers): AuthenticatedUser | null
   };
 };
 
-/*type EasyAuthMeEntry = {
+type EasyAuthMeEntry = {
   provider_name: string;
   access_token?: string;
 };
@@ -90,7 +91,7 @@ const isUsable = (accessTokenValue: string): boolean => {
   }
 
   return expiresAt - Date.now() / 1000 > TOKEN_EXPIRY_BUFFER_SECONDS;
-};*/
+};
 
 /**
  * Returns the signed-in user's Entra ID access token value for calling the backend API, as forwarded
@@ -100,29 +101,43 @@ const isUsable = (accessTokenValue: string): boolean => {
  * An expired/near-expiry value is refreshed via Easy Auth's /.auth/refresh + /.auth/me dance
  * (refresh has no response body, the refreshed value is only readable back from /.auth/me).
  */
-export const getAccessTokenValue = async (event: RequestEvent): Promise<string | null> => event.request.headers.get(ACCESS_TOKEN_HEADER);
-/*export const getAccessTokenValue = async (event: RequestEvent): Promise<string | null> => {
-  const headerTokenValue = event.request.headers.get(ACCESS_TOKEN_HEADER);
+export const getAccessTokenValue = async (event: RequestEvent): Promise<string | null> => {
+  const headerTokenValue: string | null = event.request.headers.get(ACCESS_TOKEN_HEADER);
+  if (dev) {
+    return headerTokenValue;
+  }
+
   if (headerTokenValue && isUsable(headerTokenValue)) {
     return headerTokenValue;
   }
 
-  const cookie = event.request.headers.get("cookie");
+  const cookie: string | null = event.request.headers.get("cookie");
   if (!cookie) {
     return headerTokenValue;
   }
 
-  const refreshResponse = await event.fetch("/.auth/refresh", { method: "POST", headers: { cookie } });
+  const refreshResponse: Response = await event.fetch("/.auth/refresh", {
+    method: "POST",
+    headers: {
+      cookie
+    }
+  });
+
   if (!refreshResponse.ok) {
     return headerTokenValue;
   }
 
-  const meResponse = await event.fetch("/.auth/me", { headers: { cookie } });
+  const meResponse: Response = await event.fetch("/.auth/me", {
+    headers: {
+      cookie
+    }
+  });
+
   if (!meResponse.ok) {
     return headerTokenValue;
   }
 
   const entries: EasyAuthMeEntry[] = await meResponse.json();
-  const aadEntry = entries.find((entry) => entry.provider_name === "aad");
+  const aadEntry: EasyAuthMeEntry | undefined = entries.find((entry: EasyAuthMeEntry) => entry.provider_name === "aad");
   return aadEntry?.access_token ?? headerTokenValue ?? null;
-};*/
+};
