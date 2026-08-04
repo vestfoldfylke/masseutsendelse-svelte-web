@@ -14,6 +14,7 @@ type AttachmentDownloadedResponse = Omit<AttachmentDownloadResponse, "data"> & {
   data: string;
 };
 
+// TODO: When azf-masseutsendelse-svelte-api has updated @vestfoldfylke/azure-blob-client to v2.0.0, this can be removed
 const getHrefLink = (attachmentResponse: AttachmentDownloadResponse): string => {
   const attachment: AttachmentDownloadedResponse = attachmentResponse as AttachmentDownloadedResponse;
 
@@ -115,7 +116,7 @@ export const triggerAttachmentDownload = async (dispatchId: string, filename: st
   }
 
   const link: HTMLAnchorElement = document.createElement("a");
-  link.href = getHrefLink(result);
+  link.href = getHrefLink(result); // TODO: When azf-masseutsendelse-svelte-api has updated @vestfoldfylke/azure-blob-client to v2.0.0, this can be set back to "result.data"
   link.setAttribute("download", filename);
   document.body.appendChild(link);
   link.click();
