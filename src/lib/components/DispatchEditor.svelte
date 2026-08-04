@@ -9,7 +9,7 @@
   import { uiState } from "$lib/state/uiState.svelte";
   import type { Dispatch, DispatchStatus, Owner } from "$lib/types/dispatch.types";
   import type { MatrikkelEnhet } from "$lib/types/matrikkel.types";
-  import type { EnrichedMatrikkelData } from "$lib/types/matrikkelEnrichment.types";
+  import type { EnrichedMatrikkelData, MatrikkelProgress } from "$lib/types/matrikkelEnrichment.types";
   import type { PdfPreviewRequest } from "$lib/types/pdf.types";
   import type { ParsedPolygon } from "$lib/types/polyparser.types";
   import type { Template } from "$lib/types/template.types";
@@ -23,7 +23,7 @@
   type Props = {
     dispatch?: Dispatch;
     templates: Template[];
-    onFetchMatrikkelData: (polygons: MatrikkelEnhet[]) => Promise<EnrichedMatrikkelData>;
+    onFetchMatrikkelData: (polygons: MatrikkelEnhet[], onProgress?: (progress: MatrikkelProgress) => void) => Promise<EnrichedMatrikkelData>;
     onSave: (dispatch: Dispatch) => Promise<void>;
     onPreview: (req: PdfPreviewRequest) => Promise<string>;
     onDownloadAttachment: (file: UploadedFileData) => void;
@@ -38,6 +38,9 @@
   let error: ErrorLike | undefined = $state(undefined);
   let isParsingFile: boolean = $state(false);
   let isContactingMatrikkel: boolean = $state(false);
+  let matrikkelLoadingMessage: string | undefined = $state(undefined);
+  let matrikkelLoadingSubmessage: string | undefined = $state(undefined);
+  let matrikkelLoadingSubsubmessage: string | undefined = $state(undefined);
   let isMatrikkelApproved: boolean = $state(false);
   let isDispatchApproved: boolean = $state(false);
   let isSaving: boolean = $state(false);
@@ -169,8 +172,16 @@
   const fetchMatrikkelData = async (): Promise<void> => {
     try {
       isContactingMatrikkel = true;
+      matrikkelLoadingMessage = undefined;
+      matrikkelLoadingSubmessage = undefined;
+      matrikkelLoadingSubsubmessage = undefined;
+
       const polygons: MatrikkelEnhet[] = (dispatch.polygons?.polygons ?? []).map((polygon: ParsedPolygon) => ({ epsg: polygon.EPSG, vertices: polygon.vertices }));
-      const result: EnrichedMatrikkelData = await onFetchMatrikkelData(polygons);
+      const result: EnrichedMatrikkelData = await onFetchMatrikkelData(polygons, (progress) => {
+        matrikkelLoadingMessage = progress.message;
+        matrikkelLoadingSubmessage = progress.submessage;
+        matrikkelLoadingSubsubmessage = progress.subsubmessage;
+      });
 
       dispatch.owners = [...dispatch.owners, ...result.owners];
       dispatch.excludedOwners = [...dispatch.excludedOwners, ...result.excludedOwners];
@@ -287,6 +298,9 @@
       {isReadOnly}
       {isMatrikkelApproved}
       {isContactingMatrikkel}
+      {matrikkelLoadingMessage}
+      {matrikkelLoadingSubmessage}
+      {matrikkelLoadingSubsubmessage}
       onFetchMatrikkelData={fetchMatrikkelData}
       onReset={() => reset()}
       onExcludeOwner={excludeOwner}

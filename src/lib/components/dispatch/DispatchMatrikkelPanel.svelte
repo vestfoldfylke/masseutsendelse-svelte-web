@@ -13,6 +13,8 @@
     isMatrikkelApproved: boolean;
     isContactingMatrikkel: boolean;
     matrikkelLoadingMessage?: string;
+    matrikkelLoadingSubmessage?: string;
+    matrikkelLoadingSubsubmessage?: string;
     onFetchMatrikkelData: () => void;
     onReset: () => void;
     onExcludeOwner: (owner: Owner) => void;
@@ -28,6 +30,8 @@
     isMatrikkelApproved,
     isContactingMatrikkel,
     matrikkelLoadingMessage,
+    matrikkelLoadingSubmessage,
+    matrikkelLoadingSubsubmessage,
     onFetchMatrikkelData,
     onReset,
     onExcludeOwner,
@@ -72,7 +76,7 @@
     </div>
   {:else if isContactingMatrikkel}
     <div class="shadow contacting">
-      <Loading title="Kontakter matrikkelen" message={matrikkelLoadingMessage} />
+      <Loading title="Kontakter matrikkelen" message={matrikkelLoadingMessage} submessage={matrikkelLoadingSubmessage} subsubmessage={matrikkelLoadingSubsubmessage} />
     </div>
   {:else}
     <div class="centered-column results">

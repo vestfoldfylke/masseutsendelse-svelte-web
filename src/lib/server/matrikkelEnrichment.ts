@@ -4,7 +4,7 @@ import { getMatrikkelEnheterOwnerCentric } from "$lib/matrikkel/matrikkelUtils";
 import { getExcludedOwnerIds } from "$lib/server/config";
 import type { Dispatch, MatrikkelUnit, Owner, Ownership } from "$lib/types/dispatch.types";
 import type { MatrikkelEnhet, RawMatrikkelOwner } from "$lib/types/matrikkel.types";
-import type { EnrichedMatrikkelData } from "$lib/types/matrikkelEnrichment.types";
+import type { EnrichedMatrikkelData, MatrikkelProgress } from "$lib/types/matrikkelEnrichment.types";
 import { getBrregEntity } from "./api/brreg";
 import { getMatrikkelenheterFromPolygon, getMatrikkelStoreItems } from "./api/matrikkel";
 
@@ -34,14 +34,19 @@ const chunk = <T>(items: T[], size: number): T[][] => {
  * Ported from vue-masseutsendelse-web's DispatchEditor.vue getDataFromMatrikkelAPI() (~330 lines).
  * Runs server-side now (needs the authenticated user's access token) rather than client-side.
  *
- * Known UX regression vs. the original: the old app streamed live progress messages ("Utfører jobb
- * X av Y") to the UI while batches ran. This is now a single request/response, so the client only
- * sees a generic "contacting matrikkelen" loading state for the whole duration, not per-batch
- * progress. Revisit with SSE/polling if that granularity turns out to matter in practice.
+ * The original streamed live progress messages ("Utfører jobb X av Y") to the UI while batches ran.
+ * `onProgress` reproduces that: the caller (the /api/matrikkel-enrichment route) streams each call
+ * out to the client as an NDJSON line instead of leaving it as a single opaque request/response.
  */
-export const enrichDispatchWithMatrikkelData = async (event: RequestEvent, polygons: MatrikkelEnhet[]): Promise<EnrichedMatrikkelData> => {
+export const enrichDispatchWithMatrikkelData = async (event: RequestEvent, polygons: MatrikkelEnhet[], onProgress?: (progress: MatrikkelProgress) => void): Promise<EnrichedMatrikkelData> => {
   const matrikkelUnitsWithoutOwners: MatrikkelUnit[] = [];
   const ownershipsWithoutOwnerId: Ownership[] = [];
+
+  const totalVerticesCount: number = polygons.reduce((total, polygon) => total + polygon.vertices.length, 0);
+  onProgress?.({
+    message: "Innhenter alle enhets-ider innenfor polygonene",
+    submessage: `Spør om ${polygons.length} polygoner med ${totalVerticesCount} vertiser`
+  });
 
   const matrikkelenhetIds: string[] = [];
   let koordinatsystemKodeId: number | undefined;
@@ -67,7 +72,13 @@ export const enrichDispatchWithMatrikkelData = async (event: RequestEvent, polyg
   const retrievedOwners: RawMatrikkelOwner[] = [];
   const retrievedMatrikkelUnits: MatrikkelUnit[] = [];
 
+  let batchIndex = 0;
   for (const batch of batches) {
+    onProgress?.({
+      message: `Utfører jobb ${batchIndex + 1} av ${batches.length}`,
+      submessage: `Innhenter informasjon om ${batch.length} Matrikkelenheter`
+    });
+
     const matrikkelenhetRequestItems = batch.map((id) => ({
       type: "MatrikkelenhetId",
       namespace: "http://matrikkel.statkart.no/matrikkelapi/wsapi/v1/domain/matrikkelenhet",
@@ -81,8 +92,8 @@ export const enrichDispatchWithMatrikkelData = async (event: RequestEvent, polyg
       throw new AppError("Ingen MatrikkelEnheter funnet", `Vi klarte ikke å finne matrikkelinformasjon for de ${matrikkelenhetIds.length} idene`);
     }
     if (batch.length > matrikkelenheter.length) {
-      const deviation = batch.length - matrikkelenheter.length;
-      const notFoundIds = matrikkelenhetIds.filter((id) => !matrikkelenheter.some((unit) => unit.id?.value === id));
+      const deviation: number = batch.length - matrikkelenheter.length;
+      const notFoundIds: string[] = matrikkelenhetIds.filter((id) => !matrikkelenheter.some((unit) => unit.id?.value === id));
       throw new AppError("Færre matrikkel enheter er returnert", `MatrikkelAPIet returnerte ${deviation} færre enheter enn det vi etterspurte\n${notFoundIds}`);
     }
     if (matrikkelenheter.length > batch.length) {
@@ -96,7 +107,7 @@ export const enrichDispatchWithMatrikkelData = async (event: RequestEvent, polyg
         continue;
       }
 
-      const eierforhold = Array.isArray(unit.eierforhold) ? unit.eierforhold : [unit.eierforhold];
+      const eierforhold: Ownership[] = Array.isArray(unit.eierforhold) ? unit.eierforhold : [unit.eierforhold];
 
       const ownershipIdsWithoutOwner: Array<string | undefined> = [];
       for (const ownership of eierforhold) {
@@ -105,7 +116,7 @@ export const enrichDispatchWithMatrikkelData = async (event: RequestEvent, polyg
           ownershipIdsWithoutOwner.push(ownership.id);
         }
       }
-      const remainingEierforhold = eierforhold.filter((ownership) => !ownershipIdsWithoutOwner.includes(ownership.id));
+      const remainingEierforhold: Ownership[] = eierforhold.filter((ownership) => !ownershipIdsWithoutOwner.includes(ownership.id));
       unit.eierforhold = remainingEierforhold;
 
       if (remainingEierforhold.length > 0) {
@@ -130,6 +141,12 @@ export const enrichDispatchWithMatrikkelData = async (event: RequestEvent, polyg
       value: id
     }));
 
+    onProgress?.({
+      message: `Utfører jobb ${batchIndex + 1} av ${batches.length}`,
+      submessage: `Innhenter informasjon om ${uniqueOwnerIds.length} eiere av ${batch.length} matrikkelenheter`,
+      subsubmessage: "Dette steget tar tid. Matrikkelen, Brønnøysund og Folkeregisteret kontaktes for hver eier"
+    });
+
     const matrikkeleiereResponse = (await getMatrikkelStoreItems(event, matrikkelEierRequestItems, koordinatsystemKodeId)) as StoreResponse;
     const matrikkeleiere = unwrapStoreReturn(matrikkeleiereResponse) as RawMatrikkelOwner[];
 
@@ -140,11 +157,12 @@ export const enrichDispatchWithMatrikkelData = async (event: RequestEvent, polyg
       throw new AppError("Ingen eiere er funnet", `Vi spurte matrikkelen om ${matrikkelEierRequestItems.length} eiere, men fikk kun ${matrikkeleiere.length} tilbake`);
     }
     retrievedOwners.push(...matrikkeleiere);
+    batchIndex++;
   }
 
-  let ownerCentric = getMatrikkelEnheterOwnerCentric(retrievedMatrikkelUnits, retrievedOwners);
+  let ownerCentric: Owner[] = getMatrikkelEnheterOwnerCentric(retrievedMatrikkelUnits, retrievedOwners);
 
-  const excludedOwnerIds = getExcludedOwnerIds();
+  const excludedOwnerIds: string[] = getExcludedOwnerIds();
   const preExcludedUnits: Owner[] = [];
   for (const id of excludedOwnerIds) {
     const brreg = (await getBrregEntity(event, id)) as {
@@ -171,7 +189,7 @@ export const enrichDispatchWithMatrikkelData = async (event: RequestEvent, polyg
     // "fixing" the shape mismatch, since org.brreg?.postadresse is checked first and always wins.
     org.postadresse = brreg.postadresse as unknown as Owner["postadresse"];
 
-    const hasPostAddress =
+    const hasPostAddress: string | undefined =
       (org.brreg?.postadresse && (org.brreg.postadresse.adresse || org.brreg.postadresse.postnummer || org.brreg.postadresse.poststed)) ||
       (org.postadresse && (org.postadresse.adresselinje || org.postadresse.adresselinje1 || org.postadresse.adresselinje2 || org.postadresse.adresselinje3));
 
@@ -258,9 +276,9 @@ export const enrichDispatchWithMatrikkelData = async (event: RequestEvent, polyg
     }
   }
 
-  const allExcludedOwners = excludedOwners.concat(preExcludedUnits);
+  const allExcludedOwners: Owner[] = excludedOwners.concat(preExcludedUnits);
 
-  const juridiskeEiere = retrievedOwners.filter((owner) => owner._type?.toLowerCase().includes("juridisk"));
+  const juridiskeEiere: RawMatrikkelOwner[] = retrievedOwners.filter((owner) => owner._type?.toLowerCase().includes("juridisk"));
 
   const stats: Dispatch["stats"] = {
     affectedCount: retrievedMatrikkelUnits.length,
