@@ -38,7 +38,7 @@
     "@toast-ui/editor": "^3.2.2",
     "@turf/area": "^7.3.5",
     "@turf/helpers": "^7.3.5",
-    "@vtfk/sjablong": "^1.0.2",
+    "@vtfk/sjablong": "^1.1.0",
     "dxf-parser": "^1.1.2",
     "export-from-json": "^1.7.4",
     "leaflet": "^1.9.4",
