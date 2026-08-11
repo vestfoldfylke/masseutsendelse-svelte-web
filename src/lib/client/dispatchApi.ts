@@ -10,25 +10,6 @@ type AttachmentDownloadResponse = {
   type?: string;
 };
 
-type AttachmentDownloadedResponse = Omit<AttachmentDownloadResponse, "data"> & {
-  data: string;
-};
-
-// TODO: When azf-masseutsendelse-svelte-api has updated @vestfoldfylke/azure-blob-client to v2.0.0, this can be removed
-const getHrefLink = (attachmentResponse: AttachmentDownloadResponse): string => {
-  const attachment: AttachmentDownloadedResponse = attachmentResponse as AttachmentDownloadedResponse;
-
-  if (attachment.data.startsWith("data:")) {
-    return attachment.data;
-  }
-
-  if (!attachment.encoding || !attachment.type) {
-    return attachment.data;
-  }
-
-  return `data:${attachment.type};${attachment.encoding},${attachment.data}`;
-};
-
 export const fetchDispatchById = (id: string): Promise<Dispatch> => clientApiFetch<Dispatch>(`/api/dispatches/${id}`);
 
 export const saveDispatch = (dispatch: Dispatch): Promise<void> => {
@@ -116,7 +97,7 @@ export const triggerAttachmentDownload = async (dispatchId: string, filename: st
   }
 
   const link: HTMLAnchorElement = document.createElement("a");
-  link.href = getHrefLink(result); // TODO: When azf-masseutsendelse-svelte-api has updated @vestfoldfylke/azure-blob-client to v2.0.0, this can be set back to "result.data"
+  link.href = result.data;
   link.setAttribute("download", filename);
   document.body.appendChild(link);
   link.click();
