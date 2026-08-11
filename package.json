@@ -16,19 +16,19 @@
     "lint:fix": "npx @biomejs/biome check --write"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.5",
-    "@sveltejs/adapter-node": "^5.5.4",
-    "@sveltejs/kit": "^2.70.1",
-    "@sveltejs/vite-plugin-svelte": "^7.1.2",
-    "@types/leaflet": "^1.9.21",
-    "@types/node": "^26.1.1",
+    "@biomejs/biome": "2.5.8",
+    "@sveltejs/adapter-node": "^5.5.7",
+    "@sveltejs/kit": "^2.70.2",
+    "@sveltejs/vite-plugin-svelte": "^7.3.0",
+    "@types/leaflet": "^1.9.22",
+    "@types/node": "^26.2.0",
     "@types/proj4": "^2.5.6",
     "@vitest/browser-playwright": "^4.1.8",
-    "playwright": "^1.60.0",
-    "svelte": "^5.56.7",
-    "svelte-check": "^4.7.3",
+    "playwright": "^1.62.1",
+    "svelte": "^5.56.8",
+    "svelte-check": "^4.7.5",
     "typescript": "^6.0.3",
-    "vite": "^8.1.5",
+    "vite": "^8.2.1",
     "vitest": "^4.1.8"
   },
   "dependencies": {
@@ -36,13 +36,13 @@
     "@digdir/designsystemet-web": "^1.18.0",
     "@mapbox/togeojson": "^0.16.2",
     "@toast-ui/editor": "^3.2.2",
-    "@turf/area": "^7.3.5",
+    "@turf/area": "^7.4.0",
     "@turf/helpers": "^7.3.5",
     "@vtfk/sjablong": "^1.1.0",
     "dxf-parser": "^1.1.2",
-    "export-from-json": "^1.7.4",
+    "export-from-json": "^1.8.1",
     "leaflet": "^1.9.4",
-    "proj4": "^2.20.9"
+    "proj4": "^2.21.0"
   },
   "overrides": {
     "dompurify": "^3.4.11"
