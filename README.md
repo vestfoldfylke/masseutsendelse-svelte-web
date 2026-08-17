@@ -16,6 +16,16 @@ npm install
 npm run dev -- --open
 ```
 
+### .env
+
+Create a `.env` file with the following content:
+```text
+DEV_ENTRA_OBJECT_ID="object-id-to-an-entra-user-to-mock-easy-auth-user-when-developing-locally"
+MASSEUTSENDELSE_API_BASE_URL="url-to-api"
+MATRIKKELPROXY_CLIENT_ID="client-id-used-to-contact-the-matrikkel-api"
+EXCLUDED_OWNER_IDS="comma-separated-list-of-owner-ids-to-exclude"
+```
+
 ## Building
 
 ```sh
