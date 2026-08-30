@@ -1,4 +1,5 @@
 import type { RequestEvent } from "@sveltejs/kit";
+import { logger } from "@vestfoldfylke/loglady";
 import { dev } from "$app/environment";
 import type { AuthenticatedUser, ClientPrincipal } from "$lib/types/auth.types";
 
@@ -108,11 +109,13 @@ export const getAccessTokenValue = async (event: RequestEvent): Promise<string |
   }
 
   if (headerTokenValue && isUsable(headerTokenValue)) {
+    logger.info("Usable headerTokenValue found");
     return headerTokenValue;
   }
 
   const cookie: string | null = event.request.headers.get("cookie");
   if (!cookie) {
+    logger.info("No usable headerTokenValue found. Cookie not found either");
     return headerTokenValue;
   }
 
@@ -124,6 +127,8 @@ export const getAccessTokenValue = async (event: RequestEvent): Promise<string |
   });
 
   if (!refreshResponse.ok) {
+    const errorText: string = await refreshResponse.text();
+    logger.info("No usable headerTokenValue found. Cookie found, but failed to refresh token: {@ErrorText}", errorText);
     return headerTokenValue;
   }
 
@@ -134,10 +139,14 @@ export const getAccessTokenValue = async (event: RequestEvent): Promise<string |
   });
 
   if (!meResponse.ok) {
+    const errorText: string = await meResponse.text();
+    logger.info("No usable headerTokenValue found. Cookie found. Refresh token found but failed to get me: {@ErrorText}", errorText);
     return headerTokenValue;
   }
 
   const entries: EasyAuthMeEntry[] = await meResponse.json();
+  logger.info("No usable headerTokenValue found. Cookie found. Refresh token found. MeEntries found: {@MeEntries}", entries);
   const aadEntry: EasyAuthMeEntry | undefined = entries.find((entry: EasyAuthMeEntry) => entry.provider_name === "aad");
+  logger.info("No usable headerTokenValue found. Cookie found. Refresh token found. MeAadEntry found: {@MeAadEntry}", aadEntry);
   return aadEntry?.access_token ?? headerTokenValue ?? null;
 };
