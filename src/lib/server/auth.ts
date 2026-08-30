@@ -31,17 +31,20 @@ const firstClaim = (claims: Record<string, string>, claimTypes: string[]): strin
 export const parseClientPrincipal = (headers: Headers): AuthenticatedUser | null => {
   const header: string | null = headers.get(CLIENT_PRINCIPAL_HEADER);
   if (!header) {
+    logger.info("{ClientPrincipalHeader} not found. Returning null", CLIENT_PRINCIPAL_HEADER);
     return null;
   }
 
   let principal: ClientPrincipal;
   try {
     principal = JSON.parse(Buffer.from(header, "base64").toString("utf8"));
-  } catch {
+  } catch (error) {
+    logger.errorException(error, "{ClientPrincipalHeader} found but failed to be parsed to base64. Returning null", CLIENT_PRINCIPAL_HEADER);
     return null;
   }
 
   if (!principal.claims || principal.claims.length === 0) {
+    logger.info("{ClientPrincipalHeader} found and parsed correctly, but lacks claims. Returning null", CLIENT_PRINCIPAL_HEADER);
     return null;
   }
 
@@ -50,10 +53,13 @@ export const parseClientPrincipal = (headers: Headers): AuthenticatedUser | null
     claims[claim.typ] = claim.val;
   }
 
+  logger.info("{ClientPrincipalHeader} found and parsed correctly. Claims: {@Claims}", CLIENT_PRINCIPAL_HEADER, claims);
+
   const id: string | undefined = firstClaim(claims, ID_CLAIM_TYPES);
   const name: string | undefined = firstClaim(claims, NAME_CLAIM_TYPES);
   const username: string | undefined = firstClaim(claims, USERNAME_CLAIM_TYPES);
   if (!id || !name || !username) {
+    logger.info("{ClientPrincipalHeader} found and parsed correctly. Claims found, but lacks id, name or username. Returning null", CLIENT_PRINCIPAL_HEADER);
     return null;
   }
 
