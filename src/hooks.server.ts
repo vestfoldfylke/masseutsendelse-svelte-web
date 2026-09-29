@@ -1,5 +1,4 @@
 import type { Handle } from "@sveltejs/kit";
-import { logger } from "@vestfoldfylke/loglady";
 import { dev } from "$app/environment";
 import { env } from "$env/dynamic/private";
 import { CLIENT_PRINCIPAL_HEADER, parseClientPrincipal } from "$lib/server/auth";
@@ -113,7 +112,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   if (!dev) {
     event.locals.user = user ?? null;
-    logger.info("hooks.server. AuthenticatedUser: {@User}", event.locals.user);
     return resolve(event);
   }
 

@@ -24,6 +24,7 @@ DEV_ENTRA_OBJECT_ID="object-id-to-an-entra-user-to-mock-easy-auth-user-when-deve
 MASSEUTSENDELSE_API_BASE_URL="url-to-api"
 MATRIKKELPROXY_CLIENT_ID="client-id-used-to-contact-the-matrikkel-api"
 EXCLUDED_OWNER_IDS="comma-separated-list-of-owner-ids-to-exclude"
+BODY_SIZE_LIMIT=100M # @sveltejs/adapter-node reads BODY_SIZE_LIMIT to set max payload. If BODY_SIZE_LIMIT is not present it defaults to 512K
 ```
 
 ## Building
