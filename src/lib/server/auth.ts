@@ -53,8 +53,6 @@ export const parseClientPrincipal = (headers: Headers): AuthenticatedUser | null
     claims[claim.typ] = claim.val;
   }
 
-  logger.info("{ClientPrincipalHeader} found and parsed correctly. Claims: {@Claims}", CLIENT_PRINCIPAL_HEADER, claims);
-
   const id: string | undefined = firstClaim(claims, ID_CLAIM_TYPES);
   const name: string | undefined = firstClaim(claims, NAME_CLAIM_TYPES);
   const username: string | undefined = firstClaim(claims, USERNAME_CLAIM_TYPES);
@@ -62,6 +60,8 @@ export const parseClientPrincipal = (headers: Headers): AuthenticatedUser | null
     logger.info("{ClientPrincipalHeader} found and parsed correctly. Claims found, but lacks id, name or username. Returning null", CLIENT_PRINCIPAL_HEADER);
     return null;
   }
+
+  logger.info("Principal: {Name} ({Username})", name, username);
 
   return {
     id,
@@ -115,7 +115,6 @@ export const getAccessTokenValue = async (event: RequestEvent): Promise<string |
   }
 
   if (headerTokenValue && isUsable(headerTokenValue)) {
-    logger.info("Usable headerTokenValue found");
     return headerTokenValue;
   }
 
