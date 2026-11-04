@@ -31,7 +31,7 @@ const firstClaim = (claims: Record<string, string>, claimTypes: string[]): strin
 export const parseClientPrincipal = (headers: Headers): AuthenticatedUser | null => {
   const header: string | null = headers.get(CLIENT_PRINCIPAL_HEADER);
   if (!header) {
-    logger.info("{ClientPrincipalHeader} not found. Returning null", CLIENT_PRINCIPAL_HEADER);
+    logger.debug("{ClientPrincipalHeader} not found. Returning null", CLIENT_PRINCIPAL_HEADER);
     return null;
   }
 
