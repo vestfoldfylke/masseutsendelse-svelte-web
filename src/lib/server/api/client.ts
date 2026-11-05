@@ -1,4 +1,5 @@
 import type { RequestEvent } from "@sveltejs/kit";
+import { logger } from "@vestfoldfylke/loglady";
 import { dev } from "$app/environment";
 import { AppError } from "$lib/errors/AppError";
 import { getAccessTokenValue } from "$lib/server/auth";
@@ -34,7 +35,10 @@ export const callApi = async <T>(event: RequestEvent, path: string, options: Api
 
   if (!response.ok) {
     const errorBody: ApiErrorBody | undefined = await response.json().catch(() => undefined);
-    throw new AppError(errorBody?.error?.title ?? errorBody?.title ?? "Feil ved kall til API", errorBody?.error?.message ?? errorBody?.message ?? `${path} svarte med status ${response.status}`);
+    const title: string = errorBody?.error?.title ?? errorBody?.title ?? "Feil ved kall til API";
+    const message: string = errorBody?.error?.message ?? errorBody?.message ?? `${path} svarte med status ${response.status}`;
+    logger.error("Failed when calling {Url}. Status: {Status}. StatusText: {StatusText}. Title: {Title}. Message: {Message}.", url, response.status, response.statusText, title, message);
+    throw new AppError(title, message);
   }
 
   if (response.status === 204) {
